@@ -1,0 +1,171 @@
+{
+  "entities": {
+    "Product": {
+      "title": "Product",
+      "description": "Sri Lankan spice, tea, or grocery product with package variants and pricing",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "Authenticated user ID owning this product"
+        },
+        "name": {
+          "type": "string",
+          "description": "Product display name"
+        },
+        "category": {
+          "type": "string",
+          "enum": ["SPICES", "TEA", "GROCERY ITEMS"],
+          "description": "Product category"
+        },
+        "description": {
+          "type": "string",
+          "description": "Detailed product description"
+        },
+        "imageUri": {
+          "type": "string",
+          "description": "Optional image URI or default resource tag"
+        },
+        "isArchived": {
+          "type": "boolean",
+          "description": "Whether product is archived from active catalogue"
+        },
+        "variants": {
+          "type": "array",
+          "description": "Packaging variants with pricing and active status"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when product was created"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when product was last modified"
+        }
+      },
+      "required": ["userId", "name", "category"]
+    },
+    "Sale": {
+      "title": "Sale",
+      "description": "Business transaction record representing sales for a specific date with line items",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "Authenticated user ID owning this sale record"
+        },
+        "date": {
+          "type": "string",
+          "description": "Local calendar business date in YYYY-MM-DD format (Asia/Colombo)"
+        },
+        "orderReference": {
+          "type": "string",
+          "description": "Optional invoice or order reference code"
+        },
+        "customerName": {
+          "type": "string",
+          "description": "Customer name or outlet reference"
+        },
+        "discount": {
+          "type": "number",
+          "description": "Order-level discount in LKR"
+        },
+        "isCancelled": {
+          "type": "boolean",
+          "description": "Whether transaction has been cancelled"
+        },
+        "notes": {
+          "type": "string",
+          "description": "Sale remarks or delivery notes"
+        },
+        "items": {
+          "type": "array",
+          "description": "Snapshot line items preserving historical product name, variant, cost, price, and qty"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when sale was recorded"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when sale was last modified"
+        }
+      },
+      "required": ["userId", "date"]
+    },
+    "OrderNote": {
+      "title": "OrderNote",
+      "description": "Business order record and operational memo linked to sales dates",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "Authenticated user ID owning this order note"
+        },
+        "date": {
+          "type": "string",
+          "description": "Business date in YYYY-MM-DD format"
+        },
+        "reference": {
+          "type": "string",
+          "description": "Order or memo reference code"
+        },
+        "customerName": {
+          "type": "string",
+          "description": "Customer name or distributor"
+        },
+        "orderDetails": {
+          "type": "string",
+          "description": "Summary of products, packaging, and fulfillment instructions"
+        },
+        "totalQuantity": {
+          "type": "number",
+          "description": "Total units ordered"
+        },
+        "notes": {
+          "type": "string",
+          "description": "Free-form operational notes"
+        },
+        "isArchived": {
+          "type": "boolean",
+          "description": "Whether note is archived"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when note was created"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when note was last modified"
+        }
+      },
+      "required": ["userId", "date"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}/products/{productId}": {
+      "schema": {
+        "$ref": "#/entities/Product"
+      },
+      "description": "Per-user product catalogue records with package variants"
+    },
+    "/users/{userId}/sales/{saleId}": {
+      "schema": {
+        "$ref": "#/entities/Sale"
+      },
+      "description": "Per-user daily sales transactions with line items"
+    },
+    "/users/{userId}/order_notes/{orderNoteId}": {
+      "schema": {
+        "$ref": "#/entities/OrderNote"
+      },
+      "description": "Per-user order records and operational notes"
+    }
+  }
+}

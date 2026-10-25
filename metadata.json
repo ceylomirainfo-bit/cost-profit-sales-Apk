@@ -1,0 +1,6 @@
+{
+  "name": "Ceyvana Spices",
+  "description": "Business management application for Ceyvana Spices: products, variants, pricing, daily sales, profit tracking, calendar, and orders.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
