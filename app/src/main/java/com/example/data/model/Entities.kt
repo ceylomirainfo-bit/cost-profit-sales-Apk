@@ -14,19 +14,35 @@ object ProductCategory {
     val all = listOf(SPICES, TEA, GROCERY_ITEMS)
 }
 
+object ProductType {
+    const val PREMIUM = "PREMIUM"
+    const val NORMAL = "NORMAL"
+
+    val all = listOf(PREMIUM, NORMAL)
+
+    fun getDisplayName(type: String?): String = when (type?.uppercase()?.trim()) {
+        PREMIUM -> "Premium Product"
+        NORMAL -> "Normal Product"
+        else -> "Normal Product"
+    }
+
+    fun isPremium(type: String?): Boolean = type?.uppercase()?.trim() == PREMIUM
+}
+
 object VariantSizes {
     val defaults = listOf("25g", "50g", "100g", "250g", "500g", "1kg", "Other")
 }
 
 @Entity(
     tableName = "products",
-    indices = [Index("category"), Index("isArchived")]
+    indices = [Index("category"), Index("isArchived"), Index("productType")]
 )
 data class ProductEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
     val name: String,
     val category: String,
+    val productType: String = ProductType.NORMAL,
     val description: String = "",
     val imageUri: String = "",
     val isArchived: Boolean = false,
@@ -91,6 +107,7 @@ data class SaleLineItemEntity(
     val productName: String,
     val variantName: String,
     val category: String,
+    val productType: String = ProductType.NORMAL,
     val unitCostPrice: Double,
     val unitSellingPrice: Double,
     val quantity: Int,

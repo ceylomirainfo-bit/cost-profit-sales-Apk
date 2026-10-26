@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.data.local.AppDatabase
 import com.example.data.model.OrderNoteEntity
 import com.example.data.model.ProductEntity
+import com.example.data.model.ProductType
 import com.example.data.model.ProductVariantEntity
 import com.example.data.model.ProductWithVariants
 import com.example.data.model.SaleEntity
@@ -30,6 +31,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -73,12 +75,32 @@ data class DashboardSummary(
     val dateProfitMarginPct: Double = 0.0,
     val dateUnitsSold: Int = 0,
     val dateSalesCount: Int = 0,
+    // Product group breakdown for selected date
+    val datePremiumRevenue: Double = 0.0,
+    val datePremiumCost: Double = 0.0,
+    val datePremiumProfit: Double = 0.0,
+    val datePremiumUnits: Int = 0,
+    val dateNormalRevenue: Double = 0.0,
+    val dateNormalCost: Double = 0.0,
+    val dateNormalProfit: Double = 0.0,
+    val dateNormalUnits: Int = 0,
+    // Overall totals
     val totalRevenue: Double = 0.0,
     val totalCost: Double = 0.0,
     val totalGrossProfit: Double = 0.0,
     val totalProfitMarginPct: Double = 0.0,
     val totalUnitsSold: Int = 0,
-    val totalSalesCount: Int = 0
+    val totalSalesCount: Int = 0,
+    // Product counts by group
+    val totalPremiumProducts: Int = 0,
+    val totalNormalProducts: Int = 0,
+    // Overall product group totals
+    val totalPremiumRevenue: Double = 0.0,
+    val totalPremiumCost: Double = 0.0,
+    val totalPremiumProfit: Double = 0.0,
+    val totalNormalRevenue: Double = 0.0,
+    val totalNormalCost: Double = 0.0,
+    val totalNormalProfit: Double = 0.0
 )
 
 class CeyvanaViewModel(application: Application) : AndroidViewModel(application) {
@@ -257,17 +279,38 @@ class CeyvanaViewModel(application: Application) : AndroidViewModel(application)
         _selectedCategoryFilter.value = category
     }
 
+    private val _selectedProductTypeFilter = MutableStateFlow<String?>(null) // null = ALL, "PREMIUM", "NORMAL"
+    val selectedProductTypeFilter: StateFlow<String?> = _selectedProductTypeFilter.asStateFlow()
+
+    fun setProductTypeFilter(type: String?) {
+        _selectedProductTypeFilter.value = type
+    }
+
+    val allProductCount: StateFlow<Int> = products
+        .map { it.size }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0)
+
+    val premiumProductCount: StateFlow<Int> = products
+        .map { list -> list.count { it.product.productType.equals(ProductType.PREMIUM, ignoreCase = true) } }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0)
+
+    val normalProductCount: StateFlow<Int> = products
+        .map { list -> list.count { it.product.productType.equals(ProductType.NORMAL, ignoreCase = true) } }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0)
+
     val filteredProducts: StateFlow<List<ProductWithVariants>> = combine(
         products,
         productSearchQuery,
-        selectedCategoryFilter
-    ) { list, query, cat ->
+        selectedCategoryFilter,
+        selectedProductTypeFilter
+    ) { list, query, cat, type ->
         list.filter { item ->
+            val matchesType = (type == null || item.product.productType.equals(type, ignoreCase = true))
             val matchesCat = (cat == null || item.product.category.equals(cat, ignoreCase = true))
             val matchesQuery = query.isBlank() ||
                     item.product.name.contains(query, ignoreCase = true) ||
                     item.product.description.contains(query, ignoreCase = true)
-            matchesCat && matchesQuery
+            matchesType && matchesCat && matchesQuery
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
@@ -384,6 +427,7 @@ class CeyvanaViewModel(application: Application) : AndroidViewModel(application)
         id: Long = 0,
         name: String,
         category: String,
+        productType: String = ProductType.NORMAL,
         description: String,
         imageUri: String,
         variants: List<ProductVariantEntity>
@@ -397,12 +441,19 @@ class CeyvanaViewModel(application: Application) : AndroidViewModel(application)
             return
         }
 
+        val safeProductType = if (productType.equals(ProductType.PREMIUM, ignoreCase = true)) {
+            ProductType.PREMIUM
+        } else {
+            ProductType.NORMAL
+        }
+
         viewModelScope.launch {
             try {
                 if (id == 0L) {
                     val newProduct = ProductEntity(
                         name = name.trim(),
                         category = category,
+                        productType = safeProductType,
                         description = description.trim(),
                         imageUri = imageUri,
                         isArchived = false
@@ -414,6 +465,7 @@ class CeyvanaViewModel(application: Application) : AndroidViewModel(application)
                         id = id,
                         name = name.trim(),
                         category = category,
+                        productType = safeProductType,
                         description = description.trim(),
                         imageUri = imageUri,
                         isArchived = false
@@ -500,6 +552,7 @@ class CeyvanaViewModel(application: Application) : AndroidViewModel(application)
                         productName = prod.product.name,
                         variantName = variant.variantName,
                         category = prod.product.category,
+                        productType = prod.product.productType,
                         unitCostPrice = draft.unitCostPrice,
                         unitSellingPrice = draft.unitSellingPrice,
                         quantity = draft.quantity,

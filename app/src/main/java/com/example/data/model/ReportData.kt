@@ -57,6 +57,20 @@ data class DailySummaryItem(
     val formattedGrossProfit: String get() = CurrencyFormatter.formatLkr(grossProfit)
 }
 
+data class ProductTypeSummaryItem(
+    val productType: String,
+    val revenue: Double,
+    val costOfGoodsSold: Double,
+    val grossProfit: Double,
+    val profitMarginPct: Double,
+    val unitsSold: Int
+) {
+    val formattedRevenue: String get() = CurrencyFormatter.formatLkr(revenue)
+    val formattedCOGS: String get() = CurrencyFormatter.formatLkr(costOfGoodsSold)
+    val formattedGrossProfit: String get() = CurrencyFormatter.formatLkr(grossProfit)
+    val formattedMargin: String get() = "%.1f%%".format(profitMarginPct)
+}
+
 data class ReportSaleDetailItem(
     val saleId: Long,
     val saleDate: String,
@@ -65,6 +79,7 @@ data class ReportSaleDetailItem(
     val customerName: String,
     val productName: String,
     val category: String,
+    val productType: String = ProductType.NORMAL,
     val variantName: String,
     val quantity: Int,
     val unitCostPrice: Double,
@@ -91,6 +106,7 @@ data class BusinessReportData(
     val currency: String = "LKR",
     val summary: FinancialSummary,
     val categoryBreakdown: List<CategorySummaryItem>,
+    val productTypeBreakdown: List<ProductTypeSummaryItem> = emptyList(),
     val dailyBreakdown: List<DailySummaryItem>,
     val detailedSales: List<ReportSaleDetailItem>,
     val associatedOrderNotes: List<OrderNoteEntity> = emptyList()
@@ -145,6 +161,7 @@ object ReportCalculator {
                         customerName = if (sale.customerName.isNotBlank()) sale.customerName else "Walk-in Customer",
                         productName = item.productName,
                         category = item.category,
+                        productType = item.productType,
                         variantName = item.variantName,
                         quantity = item.quantity,
                         unitCostPrice = item.unitCostPrice,
@@ -204,6 +221,30 @@ object ReportCalculator {
             )
         }
 
+        // Product classification breakdown: Premium vs Normal
+        val standardTypes = listOf(
+            ProductType.PREMIUM,
+            ProductType.NORMAL
+        )
+        val typeGroups = detailedList.groupBy { it.productType.uppercase().trim() }
+        val productTypeBreakdown = standardTypes.map { stdType ->
+            val itemsForType = typeGroups[stdType] ?: emptyList()
+            val typeRev = itemsForType.sumOf { it.netRevenue }
+            val typeCost = itemsForType.sumOf { it.costOfGoodsSold }
+            val typeProfit = itemsForType.sumOf { it.grossProfit }
+            val typeUnits = itemsForType.sumOf { it.quantity }
+            val typeMargin = if (typeRev > 0) (typeProfit / typeRev) * 100.0 else 0.0
+
+            ProductTypeSummaryItem(
+                productType = stdType,
+                revenue = typeRev,
+                costOfGoodsSold = typeCost,
+                grossProfit = typeProfit,
+                profitMarginPct = typeMargin,
+                unitsSold = typeUnits
+            )
+        }
+
         // Daily breakdown (grouped by saleDate, sorted ascending)
         val dailyMap = detailedList.groupBy { it.saleDate }.toSortedMap()
         val dailyBreakdown = dailyMap.map { (date, items) ->
@@ -235,6 +276,7 @@ object ReportCalculator {
             currency = "LKR",
             summary = financialSummary,
             categoryBreakdown = categoryBreakdown,
+            productTypeBreakdown = productTypeBreakdown,
             dailyBreakdown = dailyBreakdown,
             detailedSales = detailedList.sortedWith(compareBy({ it.saleDate }, { it.saleId })),
             associatedOrderNotes = matchingNotes

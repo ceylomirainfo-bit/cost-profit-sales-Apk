@@ -22,7 +22,7 @@ import kotlinx.coroutines.launch
         SaleLineItemEntity::class,
         OrderNoteEntity::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -34,6 +34,14 @@ abstract class AppDatabase : RoomDatabase() {
         @Volatile
         private var INSTANCE: AppDatabase? = null
 
+        val MIGRATION_1_2 = object : androidx.room.migration.Migration(1, 2) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE products ADD COLUMN productType TEXT NOT NULL DEFAULT 'NORMAL'")
+                db.execSQL("CREATE INDEX IF NOT EXISTS index_products_productType ON products(productType)")
+                db.execSQL("ALTER TABLE sale_line_items ADD COLUMN productType TEXT NOT NULL DEFAULT 'NORMAL'")
+            }
+        }
+
         fun getDatabase(context: Context, scope: CoroutineScope = CoroutineScope(Dispatchers.IO)): AppDatabase {
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
@@ -41,8 +49,8 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "ceyvana_spices.db"
                 )
+                    .addMigrations(MIGRATION_1_2)
                     .addCallback(DatabaseCallback(scope))
-                    .fallbackToDestructiveMigration()
                     .build()
                 INSTANCE = instance
                 instance
@@ -247,6 +255,7 @@ abstract class AppDatabase : RoomDatabase() {
                     ProductEntity(
                         name = item.name,
                         category = item.category,
+                        productType = item.productType,
                         description = item.description,
                         imageUri = "default:spice",
                         isArchived = false
@@ -272,7 +281,12 @@ private data class InitialProductDef(
     val name: String,
     val category: String,
     val description: String,
-    val variants: List<VariantDef>
+    val variants: List<VariantDef>,
+    val productType: String = if (name.contains("Premium", ignoreCase = true) || name.contains("Authentic", ignoreCase = true)) {
+        com.example.data.model.ProductType.PREMIUM
+    } else {
+        com.example.data.model.ProductType.NORMAL
+    }
 )
 
 private data class VariantDef(

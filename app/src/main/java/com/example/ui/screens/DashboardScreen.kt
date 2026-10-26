@@ -31,7 +31,9 @@ import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Inventory
 import androidx.compose.material.icons.filled.Receipt
 import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.TrendingUp
+import com.example.data.model.ProductType
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -389,6 +391,157 @@ fun DashboardScreen(
                                 fontWeight = FontWeight.Bold,
                                 color = Color.White
                             )
+                        }
+                    }
+                }
+            }
+        }
+
+        // Product Group Classification Performance (Premium vs Normal)
+        item {
+            Card(
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                border = BorderStroke(1.dp, Color(0xFFEBE6DC)),
+                elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .testTag("dashboard_product_groups_card")
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(
+                            text = "PRODUCT GROUP PERFORMANCE",
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = ForestGreenPrimary,
+                            letterSpacing = 0.8.sp
+                        )
+                        Text(
+                            text = summary.selectedDateDisplay,
+                            fontSize = 10.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = DarkCharcoalTextSecondary
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        // Premium Breakdown Card
+                        Surface(
+                            shape = RoundedCornerShape(12.dp),
+                            color = Color(0xFFFAF6EE),
+                            border = BorderStroke(1.dp, Color(0xFFD4AF37)),
+                            modifier = Modifier
+                                .weight(1f)
+                                .testTag("premium_group_performance")
+                        ) {
+                            Column(modifier = Modifier.padding(12.dp)) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Icon(
+                                        imageVector = Icons.Default.Star,
+                                        contentDescription = null,
+                                        tint = Color(0xFFB8860B),
+                                        modifier = Modifier.size(14.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(4.dp))
+                                    Text(
+                                        text = "Premium",
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 13.sp,
+                                        color = Color(0xFF3E2316)
+                                    )
+                                }
+                                Text(
+                                    text = "${summary.totalPremiumProducts} catalogue items",
+                                    fontSize = 10.sp,
+                                    color = DarkCharcoalTextSecondary,
+                                    modifier = Modifier.padding(top = 2.dp)
+                                )
+
+                                Spacer(modifier = Modifier.height(8.dp))
+
+                                Text("Today's Revenue", fontSize = 10.sp, color = DarkCharcoalTextSecondary)
+                                Text(
+                                    text = CurrencyFormatter.formatLkr(summary.datePremiumRevenue),
+                                    fontSize = 13.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = ForestGreenPrimary
+                                )
+
+                                Spacer(modifier = Modifier.height(4.dp))
+
+                                Text("COGS & Profit", fontSize = 10.sp, color = DarkCharcoalTextSecondary)
+                                Text(
+                                    text = "Cost: ${CurrencyFormatter.formatLkr(summary.datePremiumCost)}",
+                                    fontSize = 10.sp,
+                                    color = Color(0xFFB03A2E)
+                                )
+                                Text(
+                                    text = "Profit: ${CurrencyFormatter.formatLkr(summary.datePremiumProfit)}",
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color(0xFFB8860B)
+                                )
+                            }
+                        }
+
+                        // Normal Breakdown Card
+                        Surface(
+                            shape = RoundedCornerShape(12.dp),
+                            color = Color(0xFFF9F6F0),
+                            border = BorderStroke(1.dp, Color(0xFFD7CCC8)),
+                            modifier = Modifier
+                                .weight(1f)
+                                .testTag("normal_group_performance")
+                        ) {
+                            Column(modifier = Modifier.padding(12.dp)) {
+                                Text(
+                                    text = "Normal",
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 13.sp,
+                                    color = Color(0xFF5D4037)
+                                )
+                                Text(
+                                    text = "${summary.totalNormalProducts} catalogue items",
+                                    fontSize = 10.sp,
+                                    color = DarkCharcoalTextSecondary,
+                                    modifier = Modifier.padding(top = 2.dp)
+                                )
+
+                                Spacer(modifier = Modifier.height(8.dp))
+
+                                Text("Today's Revenue", fontSize = 10.sp, color = DarkCharcoalTextSecondary)
+                                Text(
+                                    text = CurrencyFormatter.formatLkr(summary.dateNormalRevenue),
+                                    fontSize = 13.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = ForestGreenPrimary
+                                )
+
+                                Spacer(modifier = Modifier.height(4.dp))
+
+                                Text("COGS & Profit", fontSize = 10.sp, color = DarkCharcoalTextSecondary)
+                                Text(
+                                    text = "Cost: ${CurrencyFormatter.formatLkr(summary.dateNormalCost)}",
+                                    fontSize = 10.sp,
+                                    color = Color(0xFFB03A2E)
+                                )
+                                Text(
+                                    text = "Profit: ${CurrencyFormatter.formatLkr(summary.dateNormalProfit)}",
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color(0xFF5D4037)
+                                )
+                            }
                         }
                     }
                 }

@@ -38,6 +38,7 @@ import androidx.compose.material.icons.filled.Print
 import androidx.compose.material.icons.filled.ReceiptLong
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.TableChart
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -74,6 +75,8 @@ import androidx.compose.ui.unit.sp
 import com.example.data.model.BusinessReportData
 import com.example.data.model.CategorySummaryItem
 import com.example.data.model.DailySummaryItem
+import com.example.data.model.ProductType
+import com.example.data.model.ProductTypeSummaryItem
 import com.example.data.model.ReportPeriodPreset
 import com.example.data.model.ReportSaleDetailItem
 import com.example.ui.components.DatePickerModal
@@ -602,6 +605,111 @@ fun ReportsScreen(
                             totalRevenue = reportData.summary.totalRevenue
                         )
                         if (idx < reportData.categoryBreakdown.size - 1) {
+                            HorizontalDivider(color = Color(0xFFF0F3F1))
+                        }
+                    }
+                }
+            }
+        }
+
+        // 5b. Product Classification Performance (Premium vs Normal)
+        item {
+            Text(
+                text = "Product Classification Breakdown",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+                color = ForestGreenPrimary
+            )
+        }
+
+        item {
+            ElevatedCard(
+                colors = CardDefaults.elevatedCardColors(containerColor = Color.White),
+                shape = RoundedCornerShape(16.dp),
+                modifier = Modifier.fillMaxWidth().testTag("report_product_classification_card")
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    reportData.productTypeBreakdown.forEachIndexed { idx, typeItem ->
+                        val isPremium = typeItem.productType.equals(ProductType.PREMIUM, ignoreCase = true)
+                        val totalRev = reportData.summary.totalRevenue
+                        val sharePct = if (totalRev > 0) (typeItem.revenue / totalRev) * 100.0 else 0.0
+
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .testTag("report_type_row_${typeItem.productType.lowercase()}")
+                        ) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Surface(
+                                        shape = RoundedCornerShape(6.dp),
+                                        color = if (isPremium) Color(0xFF3E2316) else Color(0xFFEDE0D4),
+                                        modifier = Modifier.padding(end = 8.dp)
+                                    ) {
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                                        ) {
+                                            if (isPremium) {
+                                                Icon(
+                                                    imageVector = Icons.Default.Star,
+                                                    contentDescription = null,
+                                                    tint = Color(0xFFFFD700),
+                                                    modifier = Modifier.size(11.dp)
+                                                )
+                                                Spacer(modifier = Modifier.width(3.dp))
+                                            }
+                                            Text(
+                                                text = if (isPremium) "Premium" else "Normal",
+                                                fontSize = 11.sp,
+                                                fontWeight = FontWeight.Bold,
+                                                color = if (isPremium) Color(0xFFFAF6EE) else Color(0xFF3E2316)
+                                            )
+                                        }
+                                    }
+                                    Text(
+                                        text = "${typeItem.unitsSold} units sold",
+                                        fontSize = 12.sp,
+                                        color = Color.Gray
+                                    )
+                                }
+
+                                Text(
+                                    text = typeItem.formattedRevenue,
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = ForestGreenPrimary
+                                )
+                            }
+
+                            Spacer(modifier = Modifier.height(4.dp))
+
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Text(
+                                    text = "COGS: ${typeItem.formattedCOGS} | Profit: ${typeItem.formattedGrossProfit} (${typeItem.formattedMargin} margin)",
+                                    fontSize = 11.sp,
+                                    color = Color(0xFF5B675F)
+                                )
+                                Text(
+                                    text = "%.1f%% of sales".format(sharePct),
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = MutedGoldSecondary
+                                )
+                            }
+                        }
+
+                        if (idx < reportData.productTypeBreakdown.size - 1) {
                             HorizontalDivider(color = Color(0xFFF0F3F1))
                         }
                     }

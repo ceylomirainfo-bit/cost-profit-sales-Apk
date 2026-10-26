@@ -20,12 +20,12 @@ object PdfReportGenerator {
     private const val CONTENT_WIDTH = PAGE_WIDTH - (MARGIN * 2)
     private const val BOTTOM_LIMIT = PAGE_HEIGHT - 48f
 
-    // Ceyvana Brand Colors
-    private val COLOR_FOREST_GREEN = Color.parseColor("#123B2A")
-    private val COLOR_FOREST_DARK = Color.parseColor("#0B291E")
-    private val COLOR_GOLD = Color.parseColor("#C5A15B")
-    private val COLOR_IVORY = Color.parseColor("#F8F5ED")
-    private val COLOR_GRAY_BG = Color.parseColor("#F1F5F2")
+    // Ceyvana Earth Brown & Ivory Luxury Brand Colors
+    private val COLOR_FOREST_GREEN = Color.parseColor("#3E2316")
+    private val COLOR_FOREST_DARK = Color.parseColor("#271309")
+    private val COLOR_GOLD = Color.parseColor("#C59A45")
+    private val COLOR_IVORY = Color.parseColor("#FAF6EE")
+    private val COLOR_GRAY_BG = Color.parseColor("#F4ECE1")
     private val COLOR_TEXT_PRIMARY = Color.parseColor("#1C1B1F")
     private val COLOR_TEXT_MUTED = Color.parseColor("#5A6B61")
     private val COLOR_BORDER = Color.parseColor("#DDE5E0")
@@ -242,6 +242,62 @@ object PdfReportGenerator {
         }
         currentY += 18f
 
+        // 2b. Product Classification Breakdown Table (Premium vs Normal)
+        if (reportData.productTypeBreakdown.isNotEmpty()) {
+            if (currentY + 80f > BOTTOM_LIMIT) newPage()
+
+            textPaint.color = COLOR_FOREST_GREEN
+            textPaint.textSize = 11f
+            textPaint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
+            canvas.drawText("Product Classification Summary (Premium vs Normal)", MARGIN, currentY, textPaint)
+            currentY += 12f
+
+            fillPaint.color = COLOR_FOREST_DARK
+            canvas.drawRect(MARGIN, currentY, PAGE_WIDTH - MARGIN, currentY + 18f, fillPaint)
+
+            val typeCols = listOf(
+                Triple("Product Type", MARGIN + 8f, 130f),
+                Triple("Units Sold", MARGIN + 140f, 65f),
+                Triple("Revenue (LKR)", MARGIN + 210f, 95f),
+                Triple("COGS (LKR)", MARGIN + 310f, 95f),
+                Triple("Gross Profit", MARGIN + 410f, 80f),
+                Triple("Margin", MARGIN + 490f, 30f)
+            )
+
+            textPaint.color = Color.WHITE
+            textPaint.textSize = 8f
+            textPaint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
+            for (col in typeCols) {
+                canvas.drawText(col.first, col.second, currentY + 12f, textPaint)
+            }
+            currentY += 18f
+
+            reportData.productTypeBreakdown.forEachIndexed { idx, typeItem ->
+                fillPaint.color = if (idx % 2 == 0) Color.WHITE else COLOR_GRAY_BG
+                canvas.drawRect(MARGIN, currentY, PAGE_WIDTH - MARGIN, currentY + 16f, fillPaint)
+                strokePaint.color = COLOR_BORDER
+                canvas.drawRect(MARGIN, currentY, PAGE_WIDTH - MARGIN, currentY + 16f, strokePaint)
+
+                textPaint.color = COLOR_TEXT_PRIMARY
+                textPaint.textSize = 8f
+                textPaint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
+
+                val label = if (typeItem.productType.equals("PREMIUM", ignoreCase = true)) "Premium Products" else "Normal Products"
+                canvas.drawText(label, MARGIN + 8f, currentY + 11f, textPaint)
+                canvas.drawText("${typeItem.unitsSold}", MARGIN + 140f, currentY + 11f, textPaint)
+                canvas.drawText(typeItem.formattedRevenue, MARGIN + 210f, currentY + 11f, textPaint)
+                canvas.drawText(typeItem.formattedCOGS, MARGIN + 310f, currentY + 11f, textPaint)
+
+                textPaint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
+                textPaint.color = COLOR_FOREST_GREEN
+                canvas.drawText(typeItem.formattedGrossProfit, MARGIN + 410f, currentY + 11f, textPaint)
+                canvas.drawText(typeItem.formattedMargin, MARGIN + 490f, currentY + 11f, textPaint)
+
+                currentY += 16f
+            }
+            currentY += 18f
+        }
+
         // 3. Daily Breakdown Table (if multiple days)
         if (reportData.dailyBreakdown.size > 1) {
             if (currentY + 100f > BOTTOM_LIMIT) newPage()
@@ -401,6 +457,14 @@ object PdfReportGenerator {
         )
         for (cat in reportData.categoryBreakdown) {
             lines.add("${cat.category}: Revenue ${cat.formattedRevenue} | COGS ${cat.formattedCOGS} | Profit ${cat.formattedGrossProfit} | Units: ${cat.unitsSold}")
+        }
+        if (reportData.productTypeBreakdown.isNotEmpty()) {
+            lines.add("")
+            lines.add("--- PRODUCT CLASSIFICATION BREAKDOWN ---")
+            for (typeItem in reportData.productTypeBreakdown) {
+                val label = if (typeItem.productType.equals("PREMIUM", ignoreCase = true)) "Premium Products" else "Normal Products"
+                lines.add("$label: Revenue ${typeItem.formattedRevenue} | COGS ${typeItem.formattedCOGS} | Profit ${typeItem.formattedGrossProfit} | Units: ${typeItem.unitsSold} (${typeItem.formattedMargin} margin)")
+            }
         }
         if (reportData.detailedSales.isNotEmpty()) {
             lines.add("")

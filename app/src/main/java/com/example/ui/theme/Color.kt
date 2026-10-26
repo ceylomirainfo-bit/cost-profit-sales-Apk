@@ -2,46 +2,84 @@ package com.example.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-// CEYVANA SPICES - Luxury Sri Lankan Brand Palette
-val ForestGreenPrimary = Color(0xFF123C2C)
-val ForestGreenOnPrimary = Color(0xFFFFFFFF)
-val ForestGreenContainer = Color(0xFFD6E8DE)
-val ForestGreenOnContainer = Color(0xFF07241A)
+// ============================================================================
+// CEYVANA SPICES - Earth Brown & Warm Ivory Luxury Brand Palette
+// A warm, rich, organic Sri Lankan spice & heritage aesthetic
+// ============================================================================
 
-val MutedGoldSecondary = Color(0xFFA67C1E)
-val MutedGoldOnSecondary = Color(0xFFFFFFFF)
-val MutedGoldContainer = Color(0xFFFBEBC7)
-val MutedGoldOnContainer = Color(0xFF332302)
+// Primary: Deep Earth Brown / Roasted Ceylon Cinnamon Bark
+val EarthBrownPrimary = Color(0xFF3E2316)
+val EarthBrownOnPrimary = Color(0xFFFFFFFF)
+val EarthBrownContainer = Color(0xFFEDE0D4)
+val EarthBrownOnContainer = Color(0xFF26140B)
 
-val CinnamonTertiary = Color(0xFF8D4024)
-val CinnamonOnTertiary = Color(0xFFFFFFFF)
-val CinnamonContainer = Color(0xFFFCE3D9)
-val CinnamonOnTertiaryContainer = Color(0xFF3B1204)
+// Secondary: Warm Amber Gold / Harvest Spice
+val AmberGoldSecondary = Color(0xFFB8860B)
+val AmberGoldOnSecondary = Color(0xFFFFFFFF)
+val AmberGoldContainer = Color(0xFFFDEFD2)
+val AmberGoldOnContainer = Color(0xFF382302)
 
-val WarmIvoryBackground = Color(0xFFFAF7F2)
-val DarkCharcoalText = Color(0xFF1F2421)
+// Tertiary: Rich Ceylon Terracotta / Cardamom Rust
+val TerracottaTertiary = Color(0xFF8D4024)
+val TerracottaOnTertiary = Color(0xFFFFFFFF)
+val TerracottaContainer = Color(0xFFFCE3D9)
+val TerracottaOnContainer = Color(0xFF3B1204)
 
+// Neutral Background & Surface: Natural Warm Ivory & Crisp Cream
+val WarmIvoryBackground = Color(0xFFFAF6EE)
 val CreamSurface = Color(0xFFFFFFFF)
-val CreamSurfaceVariant = Color(0xFFF1ECE3)
-val DarkCharcoalTextSecondary = Color(0xFF555B56)
+val CreamSurfaceVariant = Color(0xFFF2ECE1)
 
-val OutlineColor = Color(0xFF7B847D)
-val OutlineVariantColor = Color(0xFFDCD6CA)
+// Typography & Content: Deep Warm Espresso Charcoal
+val DarkCharcoalText = Color(0xFF231C18)
+val DarkCharcoalTextSecondary = Color(0xFF63564D)
+
+// Outlines & Dividers: Earth Tinted Soft Warm Grays
+val OutlineColor = Color(0xFF8C7E74)
+val OutlineVariantColor = Color(0xFFDFD5C8)
+
+// ============================================================================
+// Theme Aliases (Mapping existing identifiers to Earth Brown & Ivory)
+// ============================================================================
+val ForestGreenPrimary = EarthBrownPrimary
+val ForestGreenOnPrimary = EarthBrownOnPrimary
+val ForestGreenContainer = EarthBrownContainer
+val ForestGreenOnContainer = EarthBrownOnContainer
+
+val MutedGoldSecondary = AmberGoldSecondary
+val MutedGoldOnSecondary = AmberGoldOnSecondary
+val MutedGoldContainer = AmberGoldContainer
+val MutedGoldOnContainer = AmberGoldOnContainer
+
+val CinnamonTertiary = TerracottaTertiary
+val CinnamonOnTertiary = TerracottaOnTertiary
+val CinnamonContainer = TerracottaContainer
+val CinnamonOnTertiaryContainer = TerracottaOnContainer
 
 // Dark Theme Variants
-val DarkForestGreenPrimary = Color(0xFF86D6B4)
-val DarkForestGreenContainer = Color(0xFF144D39)
+val DarkEarthBrownPrimary = Color(0xFFD7B9A3)
+val DarkEarthBrownContainer = Color(0xFF533423)
+val DarkForestGreenPrimary = DarkEarthBrownPrimary
+val DarkForestGreenContainer = DarkEarthBrownContainer
+
 val DarkGoldSecondary = Color(0xFFE5C16C)
 val DarkGoldContainer = Color(0xFF594109)
-val DarkCharcoalBackground = Color(0xFF131715)
-val DarkCreamSurface = Color(0xFF1B201D)
-val DarkCreamSurfaceVariant = Color(0xFF272D29)
-val LightText = Color(0xFFEDEAE4)
 
-// Lock Screen Premium Brand Palette (Requested Spec)
-val LockForestGreen = Color(0xFF123B2A)
-val LockDarkGreenAccent = Color(0xFF0B291E)
-val LockMutedGold = Color(0xFFC5A15B)
-val LockWarmIvory = Color(0xFFF8F5ED)
+val DarkCharcoalBackground = Color(0xFF181412)
+val DarkCreamSurface = Color(0xFF221C18)
+val DarkCreamSurfaceVariant = Color(0xFF2F2621)
+val LightText = Color(0xFFF3EFE9)
+
+// ============================================================================
+// Lock Screen Earth Brown & Ivory Luxury Palette
+// ============================================================================
+val LockEarthBrown = Color(0xFF381F13)
+val LockDarkBrownAccent = Color(0xFF22120A)
+val LockMutedGold = Color(0xFFC59A45)
+val LockWarmIvory = Color(0xFFFDF9F0)
 val LockWhite = Color(0xFFFFFFFF)
-val LockSoftGray = Color(0xFF718096)
+val LockSoftGray = Color(0xFF7A6E65)
+
+// Aliases for LockScreen compatibility
+val LockForestGreen = LockEarthBrown
+val LockDarkGreenAccent = LockDarkBrownAccent

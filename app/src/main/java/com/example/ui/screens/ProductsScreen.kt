@@ -106,6 +106,10 @@ fun ProductsScreen(
     val filteredProducts by viewModel.filteredProducts.collectAsState()
     val searchQuery by viewModel.productSearchQuery.collectAsState()
     val selectedCat by viewModel.selectedCategoryFilter.collectAsState()
+    val selectedProductType by viewModel.selectedProductTypeFilter.collectAsState()
+    val allCount by viewModel.allProductCount.collectAsState()
+    val premCount by viewModel.premiumProductCount.collectAsState()
+    val normCount by viewModel.normalProductCount.collectAsState()
 
     var productToEdit by remember { mutableStateOf<ProductWithVariants?>(null) }
     var isAddingNewProduct by remember { mutableStateOf(false) }
@@ -169,6 +173,94 @@ fun ProductsScreen(
 
                 Spacer(modifier = Modifier.height(10.dp))
 
+                // Product Classification Tabs (ALL, PREMIUM, NORMAL)
+                Surface(
+                    shape = RoundedCornerShape(12.dp),
+                    color = Color(0xFFF2ECE4),
+                    border = BorderStroke(1.dp, Color(0xFFE2D7C9)),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .testTag("product_classification_tabs")
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(4.dp),
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        // All Products Tab
+                        val isAllSelected = (selectedProductType == null)
+                        Box(
+                            contentAlignment = Alignment.Center,
+                            modifier = Modifier
+                                .weight(1f)
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(if (isAllSelected) Color(0xFF3E2316) else Color.Transparent)
+                                .clickable { viewModel.setProductTypeFilter(null) }
+                                .padding(vertical = 8.dp)
+                                .testTag("product_tab_all")
+                        ) {
+                            Text(
+                                text = "All ($allCount)",
+                                fontSize = 12.sp,
+                                fontWeight = if (isAllSelected) FontWeight.Bold else FontWeight.Medium,
+                                color = if (isAllSelected) Color(0xFFFAF6EE) else Color(0xFF5D4037)
+                            )
+                        }
+
+                        // Premium Products Tab
+                        val isPremSelected = (selectedProductType == ProductType.PREMIUM)
+                        Box(
+                            contentAlignment = Alignment.Center,
+                            modifier = Modifier
+                                .weight(1f)
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(if (isPremSelected) Color(0xFF3E2316) else Color.Transparent)
+                                .clickable { viewModel.setProductTypeFilter(ProductType.PREMIUM) }
+                                .padding(vertical = 8.dp)
+                                .testTag("product_tab_premium")
+                        ) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(
+                                    imageVector = Icons.Default.Star,
+                                    contentDescription = null,
+                                    tint = if (isPremSelected) Color(0xFFFFD700) else Color(0xFFB8860B),
+                                    modifier = Modifier.size(13.dp)
+                                )
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Text(
+                                    text = "Premium ($premCount)",
+                                    fontSize = 12.sp,
+                                    fontWeight = if (isPremSelected) FontWeight.Bold else FontWeight.Medium,
+                                    color = if (isPremSelected) Color(0xFFFAF6EE) else Color(0xFF5D4037)
+                                )
+                            }
+                        }
+
+                        // Normal Products Tab
+                        val isNormSelected = (selectedProductType == ProductType.NORMAL)
+                        Box(
+                            contentAlignment = Alignment.Center,
+                            modifier = Modifier
+                                .weight(1f)
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(if (isNormSelected) Color(0xFF5D4037) else Color.Transparent)
+                                .clickable { viewModel.setProductTypeFilter(ProductType.NORMAL) }
+                                .padding(vertical = 8.dp)
+                                .testTag("product_tab_normal")
+                        ) {
+                            Text(
+                                text = "Normal ($normCount)",
+                                fontSize = 12.sp,
+                                fontWeight = if (isNormSelected) FontWeight.Bold else FontWeight.Medium,
+                                color = if (isNormSelected) Color(0xFFFAF6EE) else Color(0xFF5D4037)
+                            )
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(10.dp))
+
                 // Category Chips (ALL, SPICES, TEA, GROCERY ITEMS)
                 LazyRow(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -178,7 +270,7 @@ fun ProductsScreen(
                         FilterChip(
                             selected = (selectedCat == null),
                             onClick = { viewModel.setCategoryFilter(null) },
-                            label = { Text("All Products", fontSize = 12.sp, fontWeight = FontWeight.SemiBold) },
+                            label = { Text("All Categories", fontSize = 11.sp, fontWeight = FontWeight.SemiBold) },
                             colors = FilterChipDefaults.filterChipColors(
                                 selectedContainerColor = ForestGreenPrimary,
                                 selectedLabelColor = Color.White
@@ -191,7 +283,7 @@ fun ProductsScreen(
                         FilterChip(
                             selected = (selectedCat == category),
                             onClick = { viewModel.setCategoryFilter(category) },
-                            label = { Text(category, fontSize = 12.sp, fontWeight = FontWeight.SemiBold) },
+                            label = { Text(category, fontSize = 11.sp, fontWeight = FontWeight.SemiBold) },
                             colors = FilterChipDefaults.filterChipColors(
                                 selectedContainerColor = ForestGreenPrimary,
                                 selectedLabelColor = Color.White
@@ -256,11 +348,12 @@ fun ProductsScreen(
                 isAddingNewProduct = false
                 productToEdit = null
             },
-            onSave = { name, category, description, imageUri, variants ->
+            onSave = { name, category, productType, description, imageUri, variants ->
                 viewModel.saveProduct(
                     id = productToEdit?.product?.id ?: 0L,
                     name = name,
                     category = category,
+                    productType = productType,
                     description = description,
                     imageUri = imageUri,
                     variants = variants
@@ -464,19 +557,51 @@ private fun ProductItemCard(
 
                 Spacer(modifier = Modifier.width(12.dp))
 
-                // Name & Category
+                // Name, Category & Classification
                 Column(modifier = Modifier.weight(1f)) {
-                    Surface(
-                        shape = RoundedCornerShape(6.dp),
-                        color = ForestGreenContainer
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
-                        Text(
-                            text = product.category,
-                            fontSize = 10.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = ForestGreenPrimary,
-                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
-                        )
+                        Surface(
+                            shape = RoundedCornerShape(6.dp),
+                            color = ForestGreenContainer
+                        ) {
+                            Text(
+                                text = product.category,
+                                fontSize = 10.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = ForestGreenPrimary,
+                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                            )
+                        }
+
+                        val isPremium = product.productType.equals(ProductType.PREMIUM, ignoreCase = true)
+                        Surface(
+                            shape = RoundedCornerShape(6.dp),
+                            color = if (isPremium) Color(0xFF3E2316) else Color(0xFFEDE0D4),
+                            border = BorderStroke(1.dp, if (isPremium) Color(0xFFB8860B) else Color(0xFFD7CCC8)),
+                            modifier = Modifier.testTag("product_type_badge_${product.id}")
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Star,
+                                    contentDescription = null,
+                                    tint = if (isPremium) Color(0xFFFFD700) else Color(0xFF8D6E63),
+                                    modifier = Modifier.size(10.dp)
+                                )
+                                Spacer(modifier = Modifier.width(3.dp))
+                                Text(
+                                    text = if (isPremium) "Premium" else "Normal",
+                                    fontSize = 10.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = if (isPremium) Color(0xFFFAF6EE) else Color(0xFF3E2316)
+                                )
+                            }
+                        }
                     }
 
                     Spacer(modifier = Modifier.height(4.dp))
@@ -632,10 +757,11 @@ data class EditableVariantDraft(
 private fun ProductEditorDialog(
     existing: ProductWithVariants?,
     onDismiss: () -> Unit,
-    onSave: (name: String, category: String, description: String, imageUri: String, variants: List<ProductVariantEntity>) -> Unit
+    onSave: (name: String, category: String, productType: String, description: String, imageUri: String, variants: List<ProductVariantEntity>) -> Unit
 ) {
     var name by remember { mutableStateOf(existing?.product?.name ?: "") }
     var category by remember { mutableStateOf(existing?.product?.category ?: ProductCategory.SPICES) }
+    var productType by remember { mutableStateOf(existing?.product?.productType ?: "") }
     var description by remember { mutableStateOf(existing?.product?.description ?: "") }
     var imageUri by remember { mutableStateOf(existing?.product?.imageUri ?: "") }
 
@@ -697,7 +823,111 @@ private fun ProductEditorDialog(
                     modifier = Modifier.fillMaxWidth().testTag("product_name_input")
                 )
 
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(12.dp))
+
+                // Product Type (Classification: Premium vs Normal)
+                Text(
+                    text = "Product Type (Required) *",
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = DarkCharcoalText
+                )
+                Text(
+                    text = "Select whether this item belongs to the Premium collection or Normal range.",
+                    fontSize = 11.sp,
+                    color = DarkCharcoalTextSecondary
+                )
+                Spacer(modifier = Modifier.height(6.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    // Premium Option Card
+                    val isPremiumSelected = (productType == ProductType.PREMIUM)
+                    Surface(
+                        shape = RoundedCornerShape(10.dp),
+                        color = if (isPremiumSelected) Color(0xFFFAF6EE) else Color(0xFFFBF9F5),
+                        border = BorderStroke(
+                            if (isPremiumSelected) 2.dp else 1.dp,
+                            if (isPremiumSelected) Color(0xFF3E2316) else Color(0xFFD7CCC8)
+                        ),
+                        modifier = Modifier
+                            .weight(1f)
+                            .clickable { productType = ProductType.PREMIUM }
+                            .testTag("select_product_type_premium")
+                    ) {
+                        Column(modifier = Modifier.padding(10.dp)) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(
+                                    imageVector = Icons.Default.Star,
+                                    contentDescription = null,
+                                    tint = if (isPremiumSelected) Color(0xFFB8860B) else Color(0xFF8D6E63),
+                                    modifier = Modifier.size(15.dp)
+                                )
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Text(
+                                    text = "Premium",
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 13.sp,
+                                    color = if (isPremiumSelected) Color(0xFF3E2316) else DarkCharcoalText
+                                )
+                            }
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = "Ceylon export grade, special harvest & packaging",
+                                fontSize = 10.sp,
+                                color = DarkCharcoalTextSecondary,
+                                lineHeight = 13.sp
+                            )
+                        }
+                    }
+
+                    // Normal Option Card
+                    val isNormalSelected = (productType == ProductType.NORMAL)
+                    Surface(
+                        shape = RoundedCornerShape(10.dp),
+                        color = if (isNormalSelected) Color(0xFFFAF6EE) else Color(0xFFFBF9F5),
+                        border = BorderStroke(
+                            if (isNormalSelected) 2.dp else 1.dp,
+                            if (isNormalSelected) Color(0xFF5D4037) else Color(0xFFD7CCC8)
+                        ),
+                        modifier = Modifier
+                            .weight(1f)
+                            .clickable { productType = ProductType.NORMAL }
+                            .testTag("select_product_type_normal")
+                    ) {
+                        Column(modifier = Modifier.padding(10.dp)) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Text(
+                                    text = "Normal",
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 13.sp,
+                                    color = if (isNormalSelected) Color(0xFF5D4037) else DarkCharcoalText
+                                )
+                            }
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = "Standard culinary essentials & regular packaging",
+                                fontSize = 10.sp,
+                                color = DarkCharcoalTextSecondary,
+                                lineHeight = 13.sp
+                            )
+                        }
+                    }
+                }
+
+                if (productType.isBlank()) {
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = "Please select a product type before saving",
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color(0xFFC62828)
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
 
                 // Category Dropdown
                 ExposedDropdownMenuBox(
@@ -997,8 +1227,9 @@ private fun ProductEditorDialog(
                             isActive = draft.isActive
                         )
                     }
-                    onSave(name, category, description, imageUri, entityVariants)
+                    onSave(name, category, productType, description, imageUri, entityVariants)
                 },
+                enabled = name.isNotBlank() && productType.isNotBlank(),
                 colors = ButtonDefaults.buttonColors(containerColor = ForestGreenPrimary),
                 modifier = Modifier.testTag("save_product_button")
             ) {

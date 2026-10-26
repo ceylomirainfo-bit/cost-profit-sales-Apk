@@ -62,6 +62,17 @@ object CsvReportGenerator {
             }
             writer.write("\n")
 
+            // 3b. Product Classification Breakdown
+            if (reportData.productTypeBreakdown.isNotEmpty()) {
+                writer.write("--- PRODUCT CLASSIFICATION BREAKDOWN ---\n")
+                writer.write("Product Type,Units Sold,Revenue (LKR),COGS (LKR),Gross Profit (LKR),Profit Margin (%)\n")
+                for (typeItem in reportData.productTypeBreakdown) {
+                    val label = if (typeItem.productType.equals("PREMIUM", ignoreCase = true)) "Premium Products" else "Normal Products"
+                    writer.write("${escapeCsv(label)},${typeItem.unitsSold},${"%.2f".format(typeItem.revenue)},${"%.2f".format(typeItem.costOfGoodsSold)},${"%.2f".format(typeItem.grossProfit)},${"%.2f".format(typeItem.profitMarginPct)}%\n")
+                }
+                writer.write("\n")
+            }
+
             // 4. Daily Breakdown
             if (reportData.dailyBreakdown.isNotEmpty()) {
                 writer.write("--- DAILY PERFORMANCE BREAKDOWN ---\n")
@@ -74,7 +85,7 @@ object CsvReportGenerator {
 
             // 5. Detailed Sales Transactions
             writer.write("--- DETAILED SALES TRANSACTIONS & LINE ITEMS ---\n")
-            writer.write("Sale Date,Order Reference,Customer Name,Product Name,Category,Variant/Size,Quantity,Unit Selling Price (LKR),Unit Cost Price (LKR),Net Revenue (LKR),Cost of Goods Sold (LKR),Gross Profit (LKR)\n")
+            writer.write("Sale Date,Order Reference,Customer Name,Product Name,Category,Product Type,Variant/Size,Quantity,Unit Selling Price (LKR),Unit Cost Price (LKR),Net Revenue (LKR),Cost of Goods Sold (LKR),Gross Profit (LKR)\n")
             for (item in reportData.detailedSales) {
                 writer.write(
                     listOf(
@@ -83,6 +94,7 @@ object CsvReportGenerator {
                         escapeCsv(item.customerName),
                         escapeCsv(item.productName),
                         escapeCsv(item.category),
+                        escapeCsv(item.productType),
                         escapeCsv(item.variantName),
                         item.quantity.toString(),
                         "%.2f".format(item.unitSellingPrice),
