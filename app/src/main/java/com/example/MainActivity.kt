@@ -72,6 +72,20 @@ fun CeyvanaApp(
         }
     }
 
+    // Automatically check and update the business date whenever the app resumes/foregrounds
+    val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
+    androidx.compose.runtime.DisposableEffect(lifecycleOwner) {
+        val observer = androidx.lifecycle.LifecycleEventObserver { _, event ->
+            if (event == androidx.lifecycle.Lifecycle.Event.ON_RESUME) {
+                viewModel.refreshDateIfChanged()
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
+
     // Android Hardware / Gesture Back navigation
     BackHandler(enabled = !isAppLocked && currentSection != MainNavigationSection.DASHBOARD) {
         viewModel.navigateTo(MainNavigationSection.DASHBOARD)

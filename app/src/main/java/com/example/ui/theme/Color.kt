@@ -30,13 +30,15 @@ val WarmIvoryBackground = Color(0xFFFAF6EE)
 val CreamSurface = Color(0xFFFFFFFF)
 val CreamSurfaceVariant = Color(0xFFF2ECE1)
 
-// Typography & Content: Deep Warm Espresso Charcoal
-val DarkCharcoalText = Color(0xFF231C18)
-val DarkCharcoalTextSecondary = Color(0xFF63564D)
+// Typography & Content: High-Contrast Deep Charcoal and Espresso Brown
+val DarkCharcoalText = Color(0xFF1E1714)
+val DarkCharcoalTextSecondary = Color(0xFF4A3E37)
+val MutedInputLabel = Color(0xFF5A4C44)
+val MutedPlaceholderText = Color(0xFF7A6D65)
 
-// Outlines & Dividers: Earth Tinted Soft Warm Grays
-val OutlineColor = Color(0xFF8C7E74)
-val OutlineVariantColor = Color(0xFFDFD5C8)
+// Outlines & Dividers: High-definition visible warm borders
+val OutlineColor = Color(0xFF6B5C52)
+val OutlineVariantColor = Color(0xFFC7BCAD)
 
 // ============================================================================
 // Theme Aliases (Mapping existing identifiers to Earth Brown & Ivory)

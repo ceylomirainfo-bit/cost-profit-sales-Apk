@@ -78,7 +78,7 @@ class ProductClassificationTest {
         val id = repository.addProductWithVariants(premiumProduct, variants)
         assertTrue("Generated ID should be positive", id > 0)
 
-        val retrieved = repository.getProductWithVariants(id)
+        val retrieved = database.productDao().getProductWithVariantsById(id).first()
         assertNotNull(retrieved)
         assertEquals("Ceyvana Authentic Ceylon Cinnamon", retrieved!!.product.name)
         assertEquals(ProductType.PREMIUM, retrieved.product.productType)
@@ -110,7 +110,7 @@ class ProductClassificationTest {
         val id = repository.addProductWithVariants(normalProduct, variants)
         assertTrue("Generated ID should be positive", id > 0)
 
-        val retrieved = repository.getProductWithVariants(id)
+        val retrieved = database.productDao().getProductWithVariantsById(id).first()
         assertNotNull(retrieved)
         assertEquals("Standard White Pepper Powder", retrieved!!.product.name)
         assertEquals(ProductType.NORMAL, retrieved.product.productType)
@@ -139,7 +139,7 @@ class ProductClassificationTest {
         )
         val id = repository.addProductWithVariants(product, variants)
 
-        val initial = repository.getProductWithVariants(id)
+        val initial = database.productDao().getProductWithVariantsById(id).first()
         assertNotNull(initial)
         assertEquals(ProductType.NORMAL, initial!!.product.productType)
 
@@ -150,7 +150,7 @@ class ProductClassificationTest {
         )
         repository.updateProductAndVariants(reclassified, initial.variants)
 
-        val updated = repository.getProductWithVariants(id)
+        val updated = database.productDao().getProductWithVariantsById(id).first()
         assertNotNull(updated)
         assertEquals("Ceyvana Royal Reserve Cardamom Pods", updated!!.product.name)
         assertEquals(ProductType.PREMIUM, updated.product.productType)
@@ -264,7 +264,7 @@ class ProductClassificationTest {
             totalGrossProfit = 3010.0
         )
 
-        val saleId = repository.recordSaleWithItems(sale, lineItems)
+        val saleId = repository.recordSale(sale, lineItems)
         assertTrue(saleId > 0)
 
         val sales = repository.allSales.first()
@@ -339,14 +339,14 @@ class ProductClassificationTest {
             totalCost = 1000.0,
             totalGrossProfit = 1400.0
         )
-        repository.recordSaleWithItems(sale, listOf(saleItem))
+        repository.recordSale(sale, listOf(saleItem))
 
         // Step 3: Owner reclassifies product to NORMAL weeks later
         val updatedProd = prod.copy(id = prodId, productType = ProductType.NORMAL)
         repository.updateProductAndVariants(updatedProd, v)
 
         // Verify product itself is now NORMAL
-        val currentProd = repository.getProductWithVariants(prodId)
+        val currentProd = database.productDao().getProductWithVariantsById(prodId).first()
         assertEquals(ProductType.NORMAL, currentProd!!.product.productType)
 
         // Step 4: Verify historical sale line item still retains PREMIUM snapshot
@@ -386,9 +386,12 @@ class ProductClassificationTest {
                                 category TEXT NOT NULL,
                                 description TEXT NOT NULL,
                                 imageUri TEXT NOT NULL,
-                                isArchived INTEGER NOT NULL
+                                isArchived INTEGER NOT NULL,
+                                createdAt INTEGER NOT NULL
                             )
                         """.trimIndent())
+                        db.execSQL("CREATE INDEX IF NOT EXISTS index_products_category ON products(category)")
+                        db.execSQL("CREATE INDEX IF NOT EXISTS index_products_isArchived ON products(isArchived)")
 
                         db.execSQL("""
                             CREATE TABLE IF NOT EXISTS product_variants (
@@ -401,6 +404,25 @@ class ProductClassificationTest {
                                 isActive INTEGER NOT NULL
                             )
                         """.trimIndent())
+                        db.execSQL("CREATE INDEX IF NOT EXISTS index_product_variants_productId ON product_variants(productId)")
+                        db.execSQL("CREATE INDEX IF NOT EXISTS index_product_variants_isActive ON product_variants(isActive)")
+
+                        db.execSQL("""
+                            CREATE TABLE IF NOT EXISTS sales (
+                                id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                                saleDate TEXT NOT NULL,
+                                orderReference TEXT NOT NULL,
+                                customerName TEXT NOT NULL,
+                                notes TEXT NOT NULL,
+                                orderDiscount REAL NOT NULL,
+                                totalGross REAL NOT NULL,
+                                totalNet REAL NOT NULL,
+                                totalCost REAL NOT NULL,
+                                totalGrossProfit REAL NOT NULL,
+                                createdAt INTEGER NOT NULL
+                            )
+                        """.trimIndent())
+                        db.execSQL("CREATE INDEX IF NOT EXISTS index_sales_saleDate ON sales(saleDate)")
 
                         db.execSQL("""
                             CREATE TABLE IF NOT EXISTS sale_line_items (
@@ -421,11 +443,29 @@ class ProductClassificationTest {
                                 grossProfit REAL NOT NULL
                             )
                         """.trimIndent())
+                        db.execSQL("CREATE INDEX IF NOT EXISTS index_sale_line_items_saleId ON sale_line_items(saleId)")
+                        db.execSQL("CREATE INDEX IF NOT EXISTS index_sale_line_items_productId ON sale_line_items(productId)")
+
+                        db.execSQL("""
+                            CREATE TABLE IF NOT EXISTS order_notes (
+                                id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                                orderDate TEXT NOT NULL,
+                                orderReference TEXT NOT NULL,
+                                customerName TEXT NOT NULL,
+                                orderDetails TEXT NOT NULL,
+                                notes TEXT NOT NULL,
+                                status TEXT NOT NULL,
+                                createdAt INTEGER NOT NULL
+                            )
+                        """.trimIndent())
+                        db.execSQL("CREATE INDEX IF NOT EXISTS index_order_notes_orderDate ON order_notes(orderDate)")
 
                         // Insert v1 sample records
-                        db.execSQL("INSERT INTO products (id, name, category, description, imageUri, isArchived) VALUES (1, 'Legacy Cinnamon', 'Spices', 'Old Stock', '', 0)")
+                        db.execSQL("INSERT INTO products (id, name, category, description, imageUri, isArchived, createdAt) VALUES (1, 'Legacy Cinnamon', 'Spices', 'Old Stock', '', 0, 1600000000000)")
                         db.execSQL("INSERT INTO product_variants (id, productId, variantName, costPrice, sellingPrice, currency, isActive) VALUES (1, 1, '100g', 300.0, 500.0, 'LKR', 1)")
+                        db.execSQL("INSERT INTO sales (id, saleDate, orderReference, customerName, notes, orderDiscount, totalGross, totalNet, totalCost, totalGrossProfit, createdAt) VALUES (1, '2026-10-01', 'REF-001', 'Walk-in', '', 0.0, 500.0, 500.0, 300.0, 200.0, 1600000000000)")
                         db.execSQL("INSERT INTO sale_line_items (id, saleId, productId, variantId, productName, variantName, category, unitCostPrice, unitSellingPrice, quantity, discount, grossAmount, netRevenue, costOfGoodsSold, grossProfit) VALUES (1, 1, 1, 1, 'Legacy Cinnamon', '100g', 'Spices', 300.0, 500.0, 1, 0.0, 500.0, 500.0, 300.0, 200.0)")
+                        db.execSQL("INSERT INTO order_notes (id, orderDate, orderReference, customerName, orderDetails, notes, status, createdAt) VALUES (1, '2026-10-01', 'REF-001', 'Walk-in', '1x Legacy Cinnamon', '', 'Completed', 1600000000000)")
                     }
 
                     override fun onUpgrade(db: SupportSQLiteDatabase, oldVersion: Int, newVersion: Int) {}
@@ -442,7 +482,7 @@ class ProductClassificationTest {
             .build()
 
         val productDao = migratedDb.productDao()
-        val retrieved = productDao.getProductWithVariants(1)
+        val retrieved = productDao.getProductWithVariantsById(1).first()
         assertNotNull("Legacy product must be preserved after migration", retrieved)
         assertEquals("Legacy Cinnamon", retrieved!!.product.name)
         assertEquals("Existing product must safely default to NORMAL without crashes", ProductType.NORMAL, retrieved.product.productType)
@@ -508,7 +548,7 @@ class ProductClassificationTest {
             totalGrossProfit = 1100.0
         )
 
-        repository.recordSaleWithItems(sale, lineItems)
+        repository.recordSale(sale, lineItems)
         val sales = repository.allSales.first()
 
         val report = ReportCalculator.computeReport(

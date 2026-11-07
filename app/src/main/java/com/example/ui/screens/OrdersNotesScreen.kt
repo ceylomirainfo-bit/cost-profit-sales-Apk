@@ -42,6 +42,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -464,8 +465,16 @@ private fun OrderNoteEditorDialog(
                 OutlinedTextField(
                     value = date,
                     onValueChange = { date = it },
-                    label = { Text("Order Date (YYYY-MM-DD) *") },
+                    label = { Text("Order Date (YYYY-MM-DD) *", fontWeight = FontWeight.SemiBold) },
                     singleLine = true,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = DarkCharcoalText,
+                        unfocusedTextColor = DarkCharcoalText,
+                        focusedLabelColor = ForestGreenPrimary,
+                        unfocusedLabelColor = Color(0xFF4A3E37),
+                        focusedBorderColor = ForestGreenPrimary,
+                        unfocusedBorderColor = Color(0xFF8C7E74)
+                    ),
                     modifier = Modifier.fillMaxWidth().testTag("order_date_input")
                 )
 
@@ -475,8 +484,16 @@ private fun OrderNoteEditorDialog(
                 OutlinedTextField(
                     value = orderRef,
                     onValueChange = { orderRef = it },
-                    label = { Text("Order Ref / Number (e.g. ORD-1024)") },
+                    label = { Text("Order Ref / Number (e.g. ORD-1024)", fontWeight = FontWeight.SemiBold) },
                     singleLine = true,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = DarkCharcoalText,
+                        unfocusedTextColor = DarkCharcoalText,
+                        focusedLabelColor = ForestGreenPrimary,
+                        unfocusedLabelColor = Color(0xFF4A3E37),
+                        focusedBorderColor = ForestGreenPrimary,
+                        unfocusedBorderColor = Color(0xFF8C7E74)
+                    ),
                     modifier = Modifier.fillMaxWidth().testTag("order_ref_field")
                 )
 
@@ -486,8 +503,16 @@ private fun OrderNoteEditorDialog(
                 OutlinedTextField(
                     value = customer,
                     onValueChange = { customer = it },
-                    label = { Text("Customer Name") },
+                    label = { Text("Customer Name", fontWeight = FontWeight.SemiBold) },
                     singleLine = true,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = DarkCharcoalText,
+                        unfocusedTextColor = DarkCharcoalText,
+                        focusedLabelColor = ForestGreenPrimary,
+                        unfocusedLabelColor = Color(0xFF4A3E37),
+                        focusedBorderColor = ForestGreenPrimary,
+                        unfocusedBorderColor = Color(0xFF8C7E74)
+                    ),
                     modifier = Modifier.fillMaxWidth().testTag("customer_name_field")
                 )
 
@@ -497,9 +522,19 @@ private fun OrderNoteEditorDialog(
                 OutlinedTextField(
                     value = orderDetails,
                     onValueChange = { orderDetails = it },
-                    label = { Text("Products & Variants Included") },
-                    placeholder = { Text("e.g. 5x 100g Ceylon Cinnamon, 2x 250g BOPF Tea") },
+                    label = { Text("Products & Variants Included", fontWeight = FontWeight.SemiBold) },
+                    placeholder = { Text("e.g. 5x 100g Ceylon Cinnamon, 2x 250g BOPF Tea", color = Color(0xFF5A4C44)) },
                     maxLines = 3,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = DarkCharcoalText,
+                        unfocusedTextColor = DarkCharcoalText,
+                        focusedLabelColor = ForestGreenPrimary,
+                        unfocusedLabelColor = Color(0xFF4A3E37),
+                        focusedPlaceholderColor = Color(0xFF5A4C44),
+                        unfocusedPlaceholderColor = Color(0xFF5A4C44),
+                        focusedBorderColor = ForestGreenPrimary,
+                        unfocusedBorderColor = Color(0xFF8C7E74)
+                    ),
                     modifier = Modifier.fillMaxWidth().testTag("order_details_field")
                 )
 
@@ -509,9 +544,19 @@ private fun OrderNoteEditorDialog(
                 OutlinedTextField(
                     value = notesText,
                     onValueChange = { notesText = it },
-                    label = { Text("Special Instructions / Delivery Notes") },
-                    placeholder = { Text("e.g. Pack in gift bag, delivery to Kandy by Tuesday") },
+                    label = { Text("Special Instructions / Delivery Notes", fontWeight = FontWeight.SemiBold) },
+                    placeholder = { Text("e.g. Pack in gift bag, delivery to Kandy by Tuesday", color = Color(0xFF5A4C44)) },
                     maxLines = 3,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = DarkCharcoalText,
+                        unfocusedTextColor = DarkCharcoalText,
+                        focusedLabelColor = ForestGreenPrimary,
+                        unfocusedLabelColor = Color(0xFF4A3E37),
+                        focusedPlaceholderColor = Color(0xFF5A4C44),
+                        unfocusedPlaceholderColor = Color(0xFF5A4C44),
+                        focusedBorderColor = ForestGreenPrimary,
+                        unfocusedBorderColor = Color(0xFF8C7E74)
+                    ),
                     modifier = Modifier.fillMaxWidth().testTag("order_notes_field")
                 )
 
@@ -526,8 +571,18 @@ private fun OrderNoteEditorDialog(
                         value = status,
                         onValueChange = {},
                         readOnly = true,
-                        label = { Text("Order Status") },
+                        label = { Text("Order Status", fontWeight = FontWeight.SemiBold) },
                         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = statusMenuExpanded) },
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedTextColor = DarkCharcoalText,
+                            unfocusedTextColor = DarkCharcoalText,
+                            focusedLabelColor = ForestGreenPrimary,
+                            unfocusedLabelColor = Color(0xFF4A3E37),
+                            focusedTrailingIconColor = ForestGreenPrimary,
+                            unfocusedTrailingIconColor = Color(0xFF4A3E37),
+                            focusedBorderColor = ForestGreenPrimary,
+                            unfocusedBorderColor = Color(0xFF8C7E74)
+                        ),
                         modifier = Modifier
                             .menuAnchor(MenuAnchorType.PrimaryNotEditable)
                             .fillMaxWidth()
@@ -538,7 +593,7 @@ private fun OrderNoteEditorDialog(
                     ) {
                         orderStatuses.forEach { s ->
                             DropdownMenuItem(
-                                text = { Text(s) },
+                                text = { Text(s, fontWeight = FontWeight.Medium) },
                                 onClick = {
                                     status = s
                                     statusMenuExpanded = false
@@ -562,7 +617,7 @@ private fun OrderNoteEditorDialog(
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel", color = Color(0xFF666666))
+                Text("Cancel", color = Color(0xFF3E2316), fontWeight = FontWeight.SemiBold)
             }
         },
         containerColor = Color.White,

@@ -12,16 +12,20 @@ object CurrencyFormatter {
     private val decimalFormat = DecimalFormat("#,##0.00", symbols)
 
     fun formatLkr(amount: Double): String {
-        return "LKR ${decimalFormat.format(amount)}"
+        return "Rs. ${decimalFormat.format(amount)}"
+    }
+
+    fun formatRs(amount: Double): String {
+        return "Rs. ${decimalFormat.format(amount)}"
     }
 
     fun formatLkrCompact(amount: Double): String {
         return if (amount >= 1_000_000) {
-            String.format(Locale.US, "LKR %.2fM", amount / 1_000_000.0)
+            String.format(Locale.US, "Rs. %.2fM", amount / 1_000_000.0)
         } else if (amount >= 100_000) {
-            String.format(Locale.US, "LKR %.1fK", amount / 1_000.0)
+            String.format(Locale.US, "Rs. %.1fK", amount / 1_000.0)
         } else {
-            "LKR ${decimalFormat.format(amount)}"
+            "Rs. ${decimalFormat.format(amount)}"
         }
     }
 }

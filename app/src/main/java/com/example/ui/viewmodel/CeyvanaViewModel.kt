@@ -129,15 +129,23 @@ class CeyvanaViewModel(application: Application) : AndroidViewModel(application)
         // Periodic check to update actual Sri Lankan today automatically when calendar day changes
         viewModelScope.launch {
             while (true) {
-                delay(30_000) // check every 30 seconds
-                val currentSriLankaToday = DateUtils.getActualTodayIso()
-                if (currentSriLankaToday != _actualTodayDate.value) {
-                    val wasOnToday = (_selectedBusinessDate.value == _actualTodayDate.value)
-                    _actualTodayDate.value = currentSriLankaToday
-                    if (wasOnToday) {
-                        _selectedBusinessDate.value = currentSriLankaToday
-                    }
-                }
+                delay(10_000) // check every 10 seconds
+                checkAndUpdateDate()
+            }
+        }
+    }
+
+    fun refreshDateIfChanged() {
+        checkAndUpdateDate()
+    }
+
+    private fun checkAndUpdateDate() {
+        val currentSriLankaToday = DateUtils.getActualTodayIso()
+        if (currentSriLankaToday != _actualTodayDate.value) {
+            val wasOnToday = (_selectedBusinessDate.value == _actualTodayDate.value)
+            _actualTodayDate.value = currentSriLankaToday
+            if (wasOnToday) {
+                _selectedBusinessDate.value = currentSriLankaToday
             }
         }
     }
@@ -402,7 +410,7 @@ class CeyvanaViewModel(application: Application) : AndroidViewModel(application)
     }.stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(5000),
-        DashboardSummary(DateUtils.INITIAL_BUSINESS_DATE, DateUtils.formatIsoToDisplay(DateUtils.INITIAL_BUSINESS_DATE))
+        DashboardSummary(DateUtils.getActualTodayIso(), DateUtils.formatIsoToDisplay(DateUtils.getActualTodayIso()))
     )
 
     fun updateVariantCostAndPrice(variant: ProductVariantEntity, newCostPrice: Double, newSellingPrice: Double) {
@@ -475,6 +483,17 @@ class CeyvanaViewModel(application: Application) : AndroidViewModel(application)
                 }
             } catch (e: Exception) {
                 notifyUser("Error saving product: ${e.message}")
+            }
+        }
+    }
+
+    fun reloadOfficialPriceList() {
+        viewModelScope.launch {
+            try {
+                repository.loadOfficialPriceList(clearExistingProductsWithoutSales = true)
+                notifyUser("Official Sri Lankan spice price list loaded successfully")
+            } catch (e: Exception) {
+                notifyUser("Failed to reload price list: ${e.message}")
             }
         }
     }

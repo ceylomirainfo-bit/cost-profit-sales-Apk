@@ -121,7 +121,7 @@ fun DatePickerModal(
 
                     OutlinedButton(
                         onClick = {
-                            val today = LocalDate.now()
+                            val today = DateUtils.getTodayColombo()
                             selectedDay = today
                             currentYearMonth = YearMonth.from(today)
                         },

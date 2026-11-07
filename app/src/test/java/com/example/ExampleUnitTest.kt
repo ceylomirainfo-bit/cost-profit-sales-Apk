@@ -31,10 +31,10 @@ class ExampleUnitTest {
     @Test
     fun testCurrencyFormatting() {
         val formatted = CurrencyFormatter.formatLkr(1250.5)
-        assertEquals("LKR 1,250.50", formatted)
+        assertEquals("Rs. 1,250.50", formatted)
 
         val formattedZero = CurrencyFormatter.formatLkr(0.0)
-        assertEquals("LKR 0.00", formattedZero)
+        assertEquals("Rs. 0.00", formattedZero)
     }
 
     @Test

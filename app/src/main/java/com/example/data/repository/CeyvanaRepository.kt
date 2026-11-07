@@ -38,6 +38,21 @@ class CeyvanaRepository(
         }
     }
 
+    suspend fun loadOfficialPriceList(clearExistingProductsWithoutSales: Boolean = false) {
+        if (clearExistingProductsWithoutSales) {
+            val all = allProducts.first()
+            for (p in all) {
+                val hasSales = productDao.countHistoricalSalesForProduct(p.product.id) > 0
+                if (!hasSales) {
+                    productDao.deleteVariantsByProductId(p.product.id)
+                    productDao.deleteProduct(p.product)
+                }
+            }
+        }
+        AppDatabase.populateInitialCatalogue(database)
+        syncAllToFirestore()
+    }
+
     suspend fun syncAllToFirestore() {
         if (firestoreRepo == null) return
         try {

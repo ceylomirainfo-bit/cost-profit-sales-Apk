@@ -47,6 +47,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -449,8 +450,16 @@ private fun RecordSaleDialog(
                 OutlinedTextField(
                     value = saleDate,
                     onValueChange = { saleDate = it },
-                    label = { Text("Sale Date (YYYY-MM-DD) *") },
+                    label = { Text("Sale Date (YYYY-MM-DD) *", fontWeight = FontWeight.SemiBold) },
                     singleLine = true,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = DarkCharcoalText,
+                        unfocusedTextColor = DarkCharcoalText,
+                        focusedLabelColor = ForestGreenPrimary,
+                        unfocusedLabelColor = Color(0xFF4A3E37),
+                        focusedBorderColor = ForestGreenPrimary,
+                        unfocusedBorderColor = Color(0xFF8C7E74)
+                    ),
                     modifier = Modifier.fillMaxWidth().testTag("sale_date_input")
                 )
 
@@ -464,15 +473,31 @@ private fun RecordSaleDialog(
                     OutlinedTextField(
                         value = customerName,
                         onValueChange = { customerName = it },
-                        label = { Text("Customer (Optional)") },
+                        label = { Text("Customer (Optional)", fontWeight = FontWeight.SemiBold) },
                         singleLine = true,
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedTextColor = DarkCharcoalText,
+                            unfocusedTextColor = DarkCharcoalText,
+                            focusedLabelColor = ForestGreenPrimary,
+                            unfocusedLabelColor = Color(0xFF4A3E37),
+                            focusedBorderColor = ForestGreenPrimary,
+                            unfocusedBorderColor = Color(0xFF8C7E74)
+                        ),
                         modifier = Modifier.weight(1f).testTag("customer_name_input")
                     )
                     OutlinedTextField(
                         value = orderReference,
                         onValueChange = { orderReference = it },
-                        label = { Text("Order Ref (Optional)") },
+                        label = { Text("Order Ref (Optional)", fontWeight = FontWeight.SemiBold) },
                         singleLine = true,
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedTextColor = DarkCharcoalText,
+                            unfocusedTextColor = DarkCharcoalText,
+                            focusedLabelColor = ForestGreenPrimary,
+                            unfocusedLabelColor = Color(0xFF4A3E37),
+                            focusedBorderColor = ForestGreenPrimary,
+                            unfocusedBorderColor = Color(0xFF8C7E74)
+                        ),
                         modifier = Modifier.weight(1f).testTag("order_ref_input")
                     )
                 }
@@ -537,8 +562,16 @@ private fun RecordSaleDialog(
                 OutlinedTextField(
                     value = notes,
                     onValueChange = { notes = it },
-                    label = { Text("Sale Notes / Delivery Info (Optional)") },
+                    label = { Text("Sale Notes / Delivery Info (Optional)", fontWeight = FontWeight.SemiBold) },
                     maxLines = 2,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = DarkCharcoalText,
+                        unfocusedTextColor = DarkCharcoalText,
+                        focusedLabelColor = ForestGreenPrimary,
+                        unfocusedLabelColor = Color(0xFF4A3E37),
+                        focusedBorderColor = ForestGreenPrimary,
+                        unfocusedBorderColor = Color(0xFF8C7E74)
+                    ),
                     modifier = Modifier.fillMaxWidth()
                 )
 
@@ -623,7 +656,7 @@ private fun RecordSaleDialog(
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel", color = Color(0xFF666666))
+                Text("Cancel", color = Color(0xFF3E2316), fontWeight = FontWeight.SemiBold)
             }
         },
         containerColor = Color.White,
@@ -659,8 +692,18 @@ private fun SaleLineItemEditor(
                     value = draft.product?.product?.name ?: "Select Product",
                     onValueChange = {},
                     readOnly = true,
-                    label = { Text("Product *") },
+                    label = { Text("Product *", fontWeight = FontWeight.SemiBold) },
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = productExpanded) },
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = DarkCharcoalText,
+                        unfocusedTextColor = DarkCharcoalText,
+                        focusedLabelColor = ForestGreenPrimary,
+                        unfocusedLabelColor = Color(0xFF4A3E37),
+                        focusedTrailingIconColor = ForestGreenPrimary,
+                        unfocusedTrailingIconColor = Color(0xFF4A3E37),
+                        focusedBorderColor = ForestGreenPrimary,
+                        unfocusedBorderColor = Color(0xFF8C7E74)
+                    ),
                     modifier = Modifier
                         .menuAnchor(MenuAnchorType.PrimaryNotEditable)
                         .fillMaxWidth()
@@ -672,7 +715,7 @@ private fun SaleLineItemEditor(
                     availableProducts.forEach { prod ->
                         DropdownMenuItem(
                             text = {
-                                Text("${prod.product.name} (${prod.product.category})", fontSize = 13.sp)
+                                Text("${prod.product.name} (${prod.product.category})", fontSize = 13.sp, fontWeight = FontWeight.Medium)
                             },
                             onClick = {
                                 val firstVar = prod.variants.firstOrNull { it.isActive }
@@ -703,8 +746,18 @@ private fun SaleLineItemEditor(
                     value = draft.variant?.variantName ?: "Select Package Size",
                     onValueChange = {},
                     readOnly = true,
-                    label = { Text("Package Variant *") },
+                    label = { Text("Package Variant *", fontWeight = FontWeight.SemiBold) },
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = variantExpanded) },
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = DarkCharcoalText,
+                        unfocusedTextColor = DarkCharcoalText,
+                        focusedLabelColor = ForestGreenPrimary,
+                        unfocusedLabelColor = Color(0xFF4A3E37),
+                        focusedTrailingIconColor = ForestGreenPrimary,
+                        unfocusedTrailingIconColor = Color(0xFF4A3E37),
+                        focusedBorderColor = ForestGreenPrimary,
+                        unfocusedBorderColor = Color(0xFF8C7E74)
+                    ),
                     modifier = Modifier
                         .menuAnchor(MenuAnchorType.PrimaryNotEditable)
                         .fillMaxWidth()
@@ -779,10 +832,18 @@ private fun SaleLineItemEditor(
                         val num = it.toDoubleOrNull() ?: 0.0
                         onUpdate(draft.copy(discount = num))
                     },
-                    placeholder = { Text("0") },
-                    label = { Text("Discount (LKR)") },
+                    placeholder = { Text("0", color = Color(0xFF5A4C44)) },
+                    label = { Text("Discount (LKR)", fontWeight = FontWeight.SemiBold) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                     singleLine = true,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = DarkCharcoalText,
+                        unfocusedTextColor = DarkCharcoalText,
+                        focusedLabelColor = ForestGreenPrimary,
+                        unfocusedLabelColor = Color(0xFF4A3E37),
+                        focusedBorderColor = ForestGreenPrimary,
+                        unfocusedBorderColor = Color(0xFF8C7E74)
+                    ),
                     modifier = Modifier.weight(1f)
                 )
 
@@ -814,9 +875,17 @@ private fun SaleLineItemEditor(
                         val num = it.toDoubleOrNull() ?: 0.0
                         onUpdate(draft.copy(unitCostPrice = num))
                     },
-                    label = { Text("Unit Cost (LKR) *") },
+                    label = { Text("Unit Cost (LKR) *", fontWeight = FontWeight.SemiBold) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                     singleLine = true,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = DarkCharcoalText,
+                        unfocusedTextColor = DarkCharcoalText,
+                        focusedLabelColor = ForestGreenPrimary,
+                        unfocusedLabelColor = Color(0xFF4A3E37),
+                        focusedBorderColor = ForestGreenPrimary,
+                        unfocusedBorderColor = Color(0xFF8C7E74)
+                    ),
                     modifier = Modifier.weight(1f).testTag("line_cost_input")
                 )
 
@@ -826,9 +895,17 @@ private fun SaleLineItemEditor(
                         val num = it.toDoubleOrNull() ?: 0.0
                         onUpdate(draft.copy(unitSellingPrice = num))
                     },
-                    label = { Text("Unit Sell (LKR) *") },
+                    label = { Text("Unit Sell (LKR) *", fontWeight = FontWeight.SemiBold) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                     singleLine = true,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = DarkCharcoalText,
+                        unfocusedTextColor = DarkCharcoalText,
+                        focusedLabelColor = ForestGreenPrimary,
+                        unfocusedLabelColor = Color(0xFF4A3E37),
+                        focusedBorderColor = ForestGreenPrimary,
+                        unfocusedBorderColor = Color(0xFF8C7E74)
+                    ),
                     modifier = Modifier.weight(1f).testTag("line_sell_input")
                 )
             }

@@ -39,7 +39,9 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Image
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -57,6 +59,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
@@ -86,6 +89,7 @@ import coil.compose.AsyncImage
 import com.example.R
 import com.example.data.model.ProductCategory
 import com.example.data.model.ProductEntity
+import com.example.data.model.ProductType
 import com.example.data.model.ProductVariantEntity
 import com.example.data.model.ProductWithVariants
 import com.example.data.model.VariantSizes
@@ -115,6 +119,7 @@ fun ProductsScreen(
     var isAddingNewProduct by remember { mutableStateOf(false) }
     var productToDelete by remember { mutableStateOf<ProductEntity?>(null) }
     var variantToQuickEdit by remember { mutableStateOf<ProductVariantEntity?>(null) }
+    var showReloadCatalogueConfirm by remember { mutableStateOf(false) }
 
     Scaffold(
         floatingActionButton = {
@@ -150,26 +155,60 @@ fun ProductsScreen(
                     .background(Color.White)
                     .padding(horizontal = 16.dp, vertical = 12.dp)
             ) {
-                OutlinedTextField(
-                    value = searchQuery,
-                    onValueChange = { viewModel.setProductSearchQuery(it) },
-                    placeholder = { Text("Search products by name...", fontSize = 13.sp) },
-                    leadingIcon = {
-                        Icon(imageVector = Icons.Default.Search, contentDescription = null, tint = ForestGreenPrimary)
-                    },
-                    trailingIcon = {
-                        if (searchQuery.isNotEmpty()) {
-                            IconButton(onClick = { viewModel.setProductSearchQuery("") }) {
-                                Icon(imageVector = Icons.Default.Close, contentDescription = "Clear")
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    OutlinedTextField(
+                        value = searchQuery,
+                        onValueChange = { viewModel.setProductSearchQuery(it) },
+                        placeholder = { Text("Search products by name...", fontSize = 13.sp, color = Color(0xFF5A4C44), fontWeight = FontWeight.Medium) },
+                        leadingIcon = {
+                            Icon(imageVector = Icons.Default.Search, contentDescription = null, tint = ForestGreenPrimary)
+                        },
+                        trailingIcon = {
+                            if (searchQuery.isNotEmpty()) {
+                                IconButton(onClick = { viewModel.setProductSearchQuery("") }) {
+                                    Icon(imageVector = Icons.Default.Close, contentDescription = "Clear", tint = Color(0xFF3E2316))
+                                }
                             }
+                        },
+                        singleLine = true,
+                        shape = RoundedCornerShape(12.dp),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedTextColor = DarkCharcoalText,
+                            unfocusedTextColor = DarkCharcoalText,
+                            focusedPlaceholderColor = Color(0xFF5A4C44),
+                            unfocusedPlaceholderColor = Color(0xFF5A4C44),
+                            focusedBorderColor = ForestGreenPrimary,
+                            unfocusedBorderColor = Color(0xFF8C7E74),
+                            focusedLeadingIconColor = ForestGreenPrimary,
+                            unfocusedLeadingIconColor = ForestGreenPrimary
+                        ),
+                        modifier = Modifier
+                            .weight(1f)
+                            .testTag("product_search_input")
+                    )
+
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    Surface(
+                        shape = RoundedCornerShape(12.dp),
+                        color = Color(0xFFF2ECE4),
+                        border = BorderStroke(1.dp, Color(0xFFE2D7C9))
+                    ) {
+                        IconButton(
+                            onClick = { showReloadCatalogueConfirm = true },
+                            modifier = Modifier.testTag("reload_official_pricelist_button")
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Refresh,
+                                contentDescription = "Load Official Price List",
+                                tint = ForestGreenPrimary
+                            )
                         }
-                    },
-                    singleLine = true,
-                    shape = RoundedCornerShape(12.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .testTag("product_search_input")
-                )
+                    }
+                }
 
                 Spacer(modifier = Modifier.height(10.dp))
 
@@ -270,24 +309,45 @@ fun ProductsScreen(
                         FilterChip(
                             selected = (selectedCat == null),
                             onClick = { viewModel.setCategoryFilter(null) },
-                            label = { Text("All Categories", fontSize = 11.sp, fontWeight = FontWeight.SemiBold) },
+                            label = {
+                                Text(
+                                    text = "All Categories",
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = if (selectedCat == null) Color.White else Color(0xFF3E2316)
+                                )
+                            },
                             colors = FilterChipDefaults.filterChipColors(
+                                containerColor = Color(0xFFF7F3EC),
+                                labelColor = Color(0xFF3E2316),
                                 selectedContainerColor = ForestGreenPrimary,
                                 selectedLabelColor = Color.White
                             ),
+                            border = BorderStroke(1.dp, if (selectedCat == null) ForestGreenPrimary else Color(0xFF8C7E74)),
                             modifier = Modifier.testTag("category_filter_all")
                         )
                     }
 
                     items(ProductCategory.all) { category ->
+                        val isCatSelected = (selectedCat == category)
                         FilterChip(
-                            selected = (selectedCat == category),
+                            selected = isCatSelected,
                             onClick = { viewModel.setCategoryFilter(category) },
-                            label = { Text(category, fontSize = 11.sp, fontWeight = FontWeight.SemiBold) },
+                            label = {
+                                Text(
+                                    text = category,
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = if (isCatSelected) Color.White else Color(0xFF3E2316)
+                                )
+                            },
                             colors = FilterChipDefaults.filterChipColors(
+                                containerColor = Color(0xFFF7F3EC),
+                                labelColor = Color(0xFF3E2316),
                                 selectedContainerColor = ForestGreenPrimary,
                                 selectedLabelColor = Color.White
                             ),
+                            border = BorderStroke(1.dp, if (isCatSelected) ForestGreenPrimary else Color(0xFF8C7E74)),
                             modifier = Modifier.testTag("category_filter_${category.lowercase().replace(" ", "_")}")
                         )
                     }
@@ -378,6 +438,20 @@ fun ProductsScreen(
         )
     }
 
+    // Reload Official Price List Confirmation Dialog
+    if (showReloadCatalogueConfirm) {
+        ConfirmationDialog(
+            title = "Load Official Price List?",
+            message = "This will synchronize all official Sri Lankan spice products (Chilli, Turmeric, Curry Powders, Goraka, Black Pepper, Tea, Soya, Papadam, Cinnamon) with official pack sizes (25g - 1kg) and verified LKR selling prices. Any product with past sales will remain untouched.",
+            confirmText = "Load Prices",
+            onConfirm = {
+                viewModel.reloadOfficialPriceList()
+                showReloadCatalogueConfirm = false
+            },
+            onDismiss = { showReloadCatalogueConfirm = false }
+        )
+    }
+
     // Quick Cost & Selling Price Dialog
     if (variantToQuickEdit != null) {
         QuickVariantPricingDialog(
@@ -427,9 +501,17 @@ fun QuickVariantPricingDialog(
                 OutlinedTextField(
                     value = costStr,
                     onValueChange = { input -> costStr = input.filter { it.isDigit() || it == '.' } },
-                    label = { Text("Cost Price per Unit (LKR) *") },
+                    label = { Text("Cost Price per Unit (LKR) *", fontWeight = FontWeight.SemiBold) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                     singleLine = true,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = DarkCharcoalText,
+                        unfocusedTextColor = DarkCharcoalText,
+                        focusedLabelColor = ForestGreenPrimary,
+                        unfocusedLabelColor = Color(0xFF4A3E37),
+                        focusedBorderColor = ForestGreenPrimary,
+                        unfocusedBorderColor = Color(0xFF8C7E74)
+                    ),
                     modifier = Modifier.fillMaxWidth().testTag("quick_cost_input")
                 )
 
@@ -438,9 +520,17 @@ fun QuickVariantPricingDialog(
                 OutlinedTextField(
                     value = sellStr,
                     onValueChange = { input -> sellStr = input.filter { it.isDigit() || it == '.' } },
-                    label = { Text("Selling Price per Unit (LKR) *") },
+                    label = { Text("Selling Price per Unit (LKR) *", fontWeight = FontWeight.SemiBold) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                     singleLine = true,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = DarkCharcoalText,
+                        unfocusedTextColor = DarkCharcoalText,
+                        focusedLabelColor = ForestGreenPrimary,
+                        unfocusedLabelColor = Color(0xFF4A3E37),
+                        focusedBorderColor = ForestGreenPrimary,
+                        unfocusedBorderColor = Color(0xFF8C7E74)
+                    ),
                     modifier = Modifier.fillMaxWidth().testTag("quick_sell_input")
                 )
 
@@ -495,7 +585,7 @@ fun QuickVariantPricingDialog(
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel", color = Color(0xFF666666))
+                Text("Cancel", color = Color(0xFF3E2316), fontWeight = FontWeight.SemiBold)
             }
         },
         containerColor = Color.White,
@@ -664,13 +754,13 @@ private fun ProductItemCard(
                     text = "Variants, Cost & Profit per Unit:",
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Bold,
-                    color = DarkCharcoalTextSecondary
+                    color = DarkCharcoalText
                 )
                 Text(
                     text = "Tap variant to edit cost",
                     fontSize = 10.sp,
-                    color = MutedGoldSecondary,
-                    fontWeight = FontWeight.Medium
+                    color = Color(0xFF5D4037),
+                    fontWeight = FontWeight.SemiBold
                 )
             }
 
@@ -818,8 +908,16 @@ private fun ProductEditorDialog(
                 OutlinedTextField(
                     value = name,
                     onValueChange = { name = it },
-                    label = { Text("Product Name *") },
+                    label = { Text("Product Name *", fontWeight = FontWeight.SemiBold) },
                     singleLine = true,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = DarkCharcoalText,
+                        unfocusedTextColor = DarkCharcoalText,
+                        focusedLabelColor = ForestGreenPrimary,
+                        unfocusedLabelColor = Color(0xFF4A3E37),
+                        focusedBorderColor = ForestGreenPrimary,
+                        unfocusedBorderColor = Color(0xFF8C7E74)
+                    ),
                     modifier = Modifier.fillMaxWidth().testTag("product_name_input")
                 )
 
@@ -938,8 +1036,18 @@ private fun ProductEditorDialog(
                         value = category,
                         onValueChange = {},
                         readOnly = true,
-                        label = { Text("Product Category") },
+                        label = { Text("Product Category", fontWeight = FontWeight.SemiBold) },
                         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = categoryMenuExpanded) },
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedTextColor = DarkCharcoalText,
+                            unfocusedTextColor = DarkCharcoalText,
+                            focusedLabelColor = ForestGreenPrimary,
+                            unfocusedLabelColor = Color(0xFF4A3E37),
+                            focusedTrailingIconColor = ForestGreenPrimary,
+                            unfocusedTrailingIconColor = Color(0xFF4A3E37),
+                            focusedBorderColor = ForestGreenPrimary,
+                            unfocusedBorderColor = Color(0xFF8C7E74)
+                        ),
                         modifier = Modifier
                             .menuAnchor(MenuAnchorType.PrimaryNotEditable)
                             .fillMaxWidth()
@@ -950,7 +1058,7 @@ private fun ProductEditorDialog(
                     ) {
                         ProductCategory.all.forEach { cat ->
                             DropdownMenuItem(
-                                text = { Text(cat) },
+                                text = { Text(cat, fontWeight = FontWeight.Medium) },
                                 onClick = {
                                     category = cat
                                     categoryMenuExpanded = false
@@ -966,8 +1074,16 @@ private fun ProductEditorDialog(
                 OutlinedTextField(
                     value = description,
                     onValueChange = { description = it },
-                    label = { Text("Description") },
+                    label = { Text("Description", fontWeight = FontWeight.SemiBold) },
                     maxLines = 3,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = DarkCharcoalText,
+                        unfocusedTextColor = DarkCharcoalText,
+                        focusedLabelColor = ForestGreenPrimary,
+                        unfocusedLabelColor = Color(0xFF4A3E37),
+                        focusedBorderColor = ForestGreenPrimary,
+                        unfocusedBorderColor = Color(0xFF8C7E74)
+                    ),
                     modifier = Modifier.fillMaxWidth()
                 )
 
@@ -1069,10 +1185,25 @@ private fun ProductEditorDialog(
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             items(VariantSizes.defaults) { size ->
+                                val isSelected = (selectedSizeTemplate == size)
                                 FilterChip(
-                                    selected = (selectedSizeTemplate == size),
+                                    selected = isSelected,
                                     onClick = { selectedSizeTemplate = size },
-                                    label = { Text(size, fontSize = 11.sp) }
+                                    label = {
+                                        Text(
+                                            text = size,
+                                            fontSize = 11.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            color = if (isSelected) Color.White else Color(0xFF3E2316)
+                                        )
+                                    },
+                                    colors = FilterChipDefaults.filterChipColors(
+                                        containerColor = Color(0xFFF7F3EC),
+                                        labelColor = Color(0xFF3E2316),
+                                        selectedContainerColor = ForestGreenPrimary,
+                                        selectedLabelColor = Color.White
+                                    ),
+                                    border = BorderStroke(1.dp, if (isSelected) ForestGreenPrimary else Color(0xFF8C7E74))
                                 )
                             }
                         }
@@ -1082,8 +1213,16 @@ private fun ProductEditorDialog(
                             OutlinedTextField(
                                 value = customSizeName,
                                 onValueChange = { customSizeName = it },
-                                placeholder = { Text("Custom size, e.g. 75g, 2kg, Gift Pack", fontSize = 12.sp) },
+                                placeholder = { Text("Custom size, e.g. 75g, 2kg, Gift Pack", fontSize = 12.sp, color = Color(0xFF5A4C44)) },
                                 singleLine = true,
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    focusedTextColor = DarkCharcoalText,
+                                    unfocusedTextColor = DarkCharcoalText,
+                                    focusedPlaceholderColor = Color(0xFF5A4C44),
+                                    unfocusedPlaceholderColor = Color(0xFF5A4C44),
+                                    focusedBorderColor = ForestGreenPrimary,
+                                    unfocusedBorderColor = Color(0xFF8C7E74)
+                                ),
                                 modifier = Modifier.fillMaxWidth()
                             )
                         }
@@ -1114,7 +1253,7 @@ private fun ProductEditorDialog(
                         ) {
                             Icon(imageVector = Icons.Default.Add, contentDescription = null, modifier = Modifier.size(14.dp))
                             Spacer(modifier = Modifier.width(4.dp))
-                            Text("+ Add Size Variant", fontSize = 12.sp)
+                            Text("+ Add Size Variant", fontSize = 12.sp, fontWeight = FontWeight.Bold)
                         }
                     }
                 }
@@ -1168,9 +1307,17 @@ private fun ProductEditorDialog(
                                     onValueChange = { input ->
                                         variants[index] = v.copy(costPriceStr = input.filter { it.isDigit() || it == '.' })
                                     },
-                                    label = { Text("Cost (LKR)") },
+                                    label = { Text("Cost (LKR)", fontWeight = FontWeight.SemiBold) },
                                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                                     singleLine = true,
+                                    colors = OutlinedTextFieldDefaults.colors(
+                                        focusedTextColor = DarkCharcoalText,
+                                        unfocusedTextColor = DarkCharcoalText,
+                                        focusedLabelColor = ForestGreenPrimary,
+                                        unfocusedLabelColor = Color(0xFF4A3E37),
+                                        focusedBorderColor = ForestGreenPrimary,
+                                        unfocusedBorderColor = Color(0xFF8C7E74)
+                                    ),
                                     modifier = Modifier.weight(1f)
                                 )
 
@@ -1179,9 +1326,17 @@ private fun ProductEditorDialog(
                                     onValueChange = { input ->
                                         variants[index] = v.copy(sellingPriceStr = input.filter { it.isDigit() || it == '.' })
                                     },
-                                    label = { Text("Sell (LKR)") },
+                                    label = { Text("Sell (LKR)", fontWeight = FontWeight.SemiBold) },
                                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                                     singleLine = true,
+                                    colors = OutlinedTextFieldDefaults.colors(
+                                        focusedTextColor = DarkCharcoalText,
+                                        unfocusedTextColor = DarkCharcoalText,
+                                        focusedLabelColor = ForestGreenPrimary,
+                                        unfocusedLabelColor = Color(0xFF4A3E37),
+                                        focusedBorderColor = ForestGreenPrimary,
+                                        unfocusedBorderColor = Color(0xFF8C7E74)
+                                    ),
                                     modifier = Modifier.weight(1f)
                                 )
                             }
@@ -1230,7 +1385,12 @@ private fun ProductEditorDialog(
                     onSave(name, category, productType, description, imageUri, entityVariants)
                 },
                 enabled = name.isNotBlank() && productType.isNotBlank(),
-                colors = ButtonDefaults.buttonColors(containerColor = ForestGreenPrimary),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = ForestGreenPrimary,
+                    contentColor = Color.White,
+                    disabledContainerColor = Color(0xFFD7CCC8),
+                    disabledContentColor = Color(0xFF5D4037)
+                ),
                 modifier = Modifier.testTag("save_product_button")
             ) {
                 Text("Save Product", fontWeight = FontWeight.Bold)
@@ -1238,7 +1398,7 @@ private fun ProductEditorDialog(
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel", color = Color(0xFF666666))
+                Text("Cancel", color = Color(0xFF3E2316), fontWeight = FontWeight.SemiBold)
             }
         },
         containerColor = Color.White,

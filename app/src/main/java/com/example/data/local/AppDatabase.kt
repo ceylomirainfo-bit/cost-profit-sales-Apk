@@ -74,178 +74,170 @@ abstract class AppDatabase : RoomDatabase() {
             val productDao = database.productDao()
             if (productDao.getProductCount() > 0) return
 
-            // Initial catalog definitions with authentic Sri Lankan packaging variants & LKR pricing
+            // Authentic CEYVANA SPICES Catalog with verified Sri Lankan Sinhala/English titles,
+            // pack sizes, and prices in Sri Lankan Rupees (LKR).
             val initialCatalog = listOf(
-                // A. SPICES
+                // 1. SPICE PRODUCTS
                 InitialProductDef(
-                    name = "Ceyvana Premium Chilli Powder",
+                    name = "මිරිස් කුඩු (Chilli Powder)",
                     category = "SPICES",
-                    description = "Finely ground sun-dried Ceylon red chillies with bold pungent heat and vibrant crimson colour.",
+                    description = "Finely ground sun-dried red chillies with bold pungent heat and rich crimson color.",
+                    productType = com.example.data.model.ProductType.PREMIUM,
                     variants = listOf(
-                        VariantDef("50g", 120.0, 190.0),
-                        VariantDef("100g", 230.0, 360.0),
-                        VariantDef("250g", 540.0, 850.0),
-                        VariantDef("500g", 1020.0, 1650.0),
-                        VariantDef("1kg", 1950.0, 3100.0)
+                        VariantDef("50g", 65.0, 110.0),
+                        VariantDef("100g", 130.0, 220.0),
+                        VariantDef("250g", 330.0, 550.0),
+                        VariantDef("500g", 660.0, 1100.0),
+                        VariantDef("1kg", 1320.0, 2200.0)
                     )
                 ),
                 InitialProductDef(
-                    name = "Ceyvana Premium Chilli Pieces",
+                    name = "කෑලි මිරිස් (Chilli Pieces)",
                     category = "SPICES",
-                    description = "Coarsely crushed sun-dried hot chillies with seeds for authentic spicy sambols and tempering.",
+                    description = "Coarsely crushed hot red chillies with seeds for authentic spicy lunu miris, sambols, and tempering.",
+                    productType = com.example.data.model.ProductType.PREMIUM,
                     variants = listOf(
-                        VariantDef("50g", 110.0, 180.0),
-                        VariantDef("100g", 210.0, 340.0),
-                        VariantDef("250g", 500.0, 800.0),
-                        VariantDef("500g", 980.0, 1550.0),
-                        VariantDef("1kg", 1880.0, 2980.0)
+                        VariantDef("50g", 65.0, 105.0),
+                        VariantDef("100g", 125.0, 210.0),
+                        VariantDef("250g", 315.0, 525.0),
+                        VariantDef("500g", 630.0, 1050.0),
+                        VariantDef("1kg", 1260.0, 2100.0)
                     )
                 ),
                 InitialProductDef(
-                    name = "Ceyvana Premium Traditional Curry Powder",
+                    name = "තුනපහ කුඩු (Curry Powder)",
                     category = "SPICES",
-                    description = "Classic raw Ceylon aromatic spice blend of coriander, cumin, sweet cumin, and fenugreek.",
+                    description = "Classic raw Ceylon aromatic spice blend of coriander, cumin, fennel, and fragrant spices.",
+                    productType = com.example.data.model.ProductType.PREMIUM,
                     variants = listOf(
-                        VariantDef("50g", 130.0, 210.0),
-                        VariantDef("100g", 240.0, 390.0),
-                        VariantDef("250g", 570.0, 920.0),
-                        VariantDef("500g", 1080.0, 1750.0),
-                        VariantDef("1kg", 2050.0, 3300.0)
+                        VariantDef("50g", 55.0, 95.0),
+                        VariantDef("100g", 115.0, 190.0),
+                        VariantDef("250g", 285.0, 475.0),
+                        VariantDef("500g", 570.0, 950.0),
+                        VariantDef("1kg", 1140.0, 1900.0)
                     )
                 ),
                 InitialProductDef(
-                    name = "Ceyvana Premium Roasted Curry Powder (Badapu Thunapaha)",
+                    name = "කහ කුඩු (Turmeric Powder)",
                     category = "SPICES",
-                    description = "Masterfully slow-roasted dark Sri Lankan curry powder delivering deep smoky fragrance and rich curry gravy.",
+                    description = "100% pure organic Sri Lankan turmeric with high natural curcumin and vivid golden color.",
+                    productType = com.example.data.model.ProductType.PREMIUM,
                     variants = listOf(
-                        VariantDef("50g", 150.0, 240.0),
-                        VariantDef("100g", 280.0, 450.0),
-                        VariantDef("250g", 650.0, 1050.0),
-                        VariantDef("500g", 1250.0, 2000.0),
-                        VariantDef("1kg", 2400.0, 3800.0)
+                        VariantDef("25g", 85.0, 140.0),
+                        VariantDef("50g", 170.0, 280.0),
+                        VariantDef("100g", 310.0, 510.0),
+                        VariantDef("250g", 720.0, 1200.0),
+                        VariantDef("500g", 1380.0, 2300.0),
+                        VariantDef("1kg", 2760.0, 4600.0)
                     )
                 ),
                 InitialProductDef(
-                    name = "Ceyvana Premium Ceylon Turmeric Powder",
+                    name = "බැදපු තුනපහ (Roasted Curry Powder)",
                     category = "SPICES",
-                    description = "100% pure organic Sri Lankan turmeric with high natural curcumin content and brilliant golden hue.",
+                    description = "Masterfully slow-roasted dark Sri Lankan curry powder delivering deep aroma and savory curry gravies.",
+                    productType = com.example.data.model.ProductType.PREMIUM,
                     variants = listOf(
-                        VariantDef("50g", 140.0, 230.0),
-                        VariantDef("100g", 260.0, 420.0),
-                        VariantDef("250g", 620.0, 990.0),
-                        VariantDef("500g", 1180.0, 1890.0)
+                        VariantDef("50g", 70.0, 115.0),
+                        VariantDef("100g", 140.0, 230.0),
+                        VariantDef("250g", 345.0, 575.0),
+                        VariantDef("500g", 690.0, 1150.0),
+                        VariantDef("1kg", 1380.0, 2300.0)
                     )
                 ),
                 InitialProductDef(
-                    name = "Ceyvana Premium Meat Curry Powder",
+                    name = "මස් කරි කුඩු (Meat Curry Powder)",
                     category = "SPICES",
-                    description = "Specialized fiery roasted spice blend enriched with black pepper, cardamom, and clove for meats and poultry.",
+                    description = "Specialized roasted spice blend enriched with black pepper, cardamom, and clove for savory meat and poultry.",
+                    productType = com.example.data.model.ProductType.PREMIUM,
                     variants = listOf(
-                        VariantDef("50g", 160.0, 260.0),
-                        VariantDef("100g", 300.0, 480.0),
-                        VariantDef("250g", 700.0, 1120.0),
-                        VariantDef("500g", 1350.0, 2150.0)
-                    )
-                ),
-                InitialProductDef(
-                    name = "Ceyvana Authentic Ceylon Cinnamon",
-                    category = "SPICES",
-                    description = "True Ceylon Alba & C5 grade quills delicately layered with sweet woody aroma and low coumarin.",
-                    variants = listOf(
-                        VariantDef("25g", 160.0, 260.0),
-                        VariantDef("50g", 300.0, 490.0),
-                        VariantDef("100g", 580.0, 940.0),
-                        VariantDef("250g", 1390.0, 2250.0),
-                        VariantDef("500g", 2650.0, 4200.0),
-                        VariantDef("1kg", 5100.0, 8000.0)
-                    )
-                ),
-                InitialProductDef(
-                    name = "Ceylon Black Pepper",
-                    category = "SPICES",
-                    description = "Sun-ripened Ceylon black peppercorns renowned worldwide for extraordinary piperine pungency and sharp bite.",
-                    variants = listOf(
-                        VariantDef("50g", 140.0, 230.0),
-                        VariantDef("100g", 270.0, 440.0),
-                        VariantDef("250g", 640.0, 1020.0),
-                        VariantDef("500g", 1220.0, 1950.0),
-                        VariantDef("1kg", 2350.0, 3750.0)
-                    )
-                ),
-                InitialProductDef(
-                    name = "Ceyvana Premium Roasted Fenugreek Blend",
-                    category = "SPICES",
-                    description = "Gently roasted aromatic fenugreek (Uluhal) seeds to balance bitterness and infuse warm maple-like depth.",
-                    variants = listOf(
-                        VariantDef("50g", 90.0, 150.0),
+                        VariantDef("50g", 85.0, 140.0),
                         VariantDef("100g", 170.0, 280.0),
-                        VariantDef("250g", 400.0, 650.0)
+                        VariantDef("250g", 420.0, 700.0),
+                        VariantDef("500g", 840.0, 1400.0),
+                        VariantDef("1kg", 1680.0, 2800.0)
                     )
                 ),
                 InitialProductDef(
-                    name = "Ceyvana Cinnamon Pieces",
+                    name = "උළුහාල් මිශ්රණය (Fenugreek Blend)",
                     category = "SPICES",
-                    description = "Pure Ceylon cinnamon chips and broken quills optimal for spice infusions, biryani, and simmering curries.",
+                    description = "Fragrant blend of roasted fenugreek (Uluhal) and complementary aromatic spices.",
+                    productType = com.example.data.model.ProductType.NORMAL,
                     variants = listOf(
-                        VariantDef("50g", 180.0, 300.0),
-                        VariantDef("100g", 340.0, 560.0),
-                        VariantDef("250g", 820.0, 1340.0),
-                        VariantDef("500g", 1580.0, 2550.0)
+                        VariantDef("25g", 25.0, 40.0),
+                        VariantDef("50g", 50.0, 80.0),
+                        VariantDef("100g", 100.0, 160.0),
+                        VariantDef("250g", 240.0, 400.0),
+                        VariantDef("500g", 480.0, 800.0),
+                        VariantDef("1kg", 960.0, 1600.0)
+                    )
+                ),
+                InitialProductDef(
+                    name = "ගොරක (Goraka)",
+                    category = "GROCERY ITEMS",
+                    description = "Naturally cured Gambooge (Garcinia cambogia) pods for fish ambul thiyal and sour curries.",
+                    productType = com.example.data.model.ProductType.NORMAL,
+                    variants = listOf(
+                        VariantDef("50g", 25.0, 40.0),
+                        VariantDef("100g", 50.0, 80.0),
+                        VariantDef("250g", 120.0, 200.0),
+                        VariantDef("500g", 240.0, 400.0),
+                        VariantDef("1kg", 480.0, 800.0)
+                    )
+                ),
+                InitialProductDef(
+                    name = "ගම්මිරිස් (Black Pepper)",
+                    category = "SPICES",
+                    description = "Pure sun-ripened Ceylon black peppercorns renowned for high piperine and sharp heat.",
+                    productType = com.example.data.model.ProductType.PREMIUM,
+                    variants = listOf(
+                        VariantDef("25g", 45.0, 70.0),
+                        VariantDef("50g", 80.0, 130.0),
+                        VariantDef("100g", 160.0, 260.0),
+                        VariantDef("250g", 390.0, 650.0),
+                        VariantDef("500g", 780.0, 1300.0),
+                        VariantDef("1kg", 1560.0, 2600.0)
+                    )
+                ),
+                InitialProductDef(
+                    name = "තේ BOPF (BOPF Tea)",
+                    category = "TEA",
+                    description = "Brisk Ceylon Broken Orange Pekoe Fannings black tea delivering full body and golden brew.",
+                    productType = com.example.data.model.ProductType.PREMIUM,
+                    variants = listOf(
+                        VariantDef("50g", 55.0, 90.0),
+                        VariantDef("100g", 110.0, 180.0),
+                        VariantDef("250g", 270.0, 450.0),
+                        VariantDef("500g", 540.0, 900.0),
+                        VariantDef("1kg", 1080.0, 1800.0)
                     )
                 ),
 
-                // B. TEA
+                // 2. OTHER PRODUCTS
                 InitialProductDef(
-                    name = "Ceyvana 'Hithe Rasaya' BOPF Tea",
-                    category = "TEA",
-                    description = "Single-estate Broken Orange Pekoe Fannings Ceylon black tea from misty central highlands with brisk full body.",
-                    variants = listOf(
-                        VariantDef("100g", 220.0, 380.0),
-                        VariantDef("250g", 520.0, 890.0),
-                        VariantDef("500g", 990.0, 1690.0),
-                        VariantDef("1kg", 1890.0, 3200.0)
-                    )
-                ),
-                InitialProductDef(
-                    name = "Ceylomira Traditional Black Tea (Ceylon Brew)",
-                    category = "TEA",
-                    description = "Heritage loose-leaf Ceylon black tea blend with copper-bright liquor, sweet floral notes, and comforting warmth.",
-                    variants = listOf(
-                        VariantDef("100g", 240.0, 410.0),
-                        VariantDef("250g", 560.0, 950.0),
-                        VariantDef("500g", 1060.0, 1800.0)
-                    )
-                ),
-                InitialProductDef(
-                    name = "Ceyvana Ceylon Spice Chai",
-                    category = "TEA",
-                    description = "Robust BOP Ceylon tea hand-blended with organic Ceylon cinnamon, ginger root, cloves, and green cardamom.",
-                    variants = listOf(
-                        VariantDef("100g", 320.0, 550.0),
-                        VariantDef("250g", 750.0, 1280.0),
-                        VariantDef("500g", 1420.0, 2400.0)
-                    )
-                ),
-
-                // C. GROCERY ITEMS
-                InitialProductDef(
-                    name = "Ceyvana Goraka (Garcinia)",
+                    name = "සෝයා (Soya)",
                     category = "GROCERY ITEMS",
-                    description = "Naturally sun-cured smoked Gambooge (Garcinia cambogia) pods for traditional Fish Ambul Thiyal and sour meat marinades.",
+                    description = "High protein textured soya meat chunks for flavorful curries and stir-fries.",
+                    productType = com.example.data.model.ProductType.NORMAL,
                     variants = listOf(
-                        VariantDef("100g", 190.0, 320.0),
-                        VariantDef("250g", 450.0, 750.0),
-                        VariantDef("500g", 860.0, 1420.0)
+                        VariantDef("70g", 50.0, 80.0)
                     )
                 ),
                 InitialProductDef(
-                    name = "Ceyvana Papadam",
+                    name = "පපඩම් (Papadam)",
                     category = "GROCERY ITEMS",
-                    description = "Crispy sun-dried urad flour wafers crafted according to heirloom recipe, puffing golden in hot coconut oil.",
+                    description = "Crispy sun-dried urad wafers that puff golden and crunchy in hot oil.",
+                    productType = com.example.data.model.ProductType.NORMAL,
                     variants = listOf(
-                        VariantDef("100g", 110.0, 190.0),
-                        VariantDef("200g", 200.0, 350.0),
-                        VariantDef("500g", 480.0, 820.0)
+                        VariantDef("100g", 60.0, 100.0)
+                    )
+                ),
+                InitialProductDef(
+                    name = "කුරුඳු (Cinnamon)",
+                    category = "SPICES",
+                    description = "Authentic Ceylon cinnamon with delicate sweet aroma and layered quills.",
+                    productType = com.example.data.model.ProductType.PREMIUM,
+                    variants = listOf(
+                        VariantDef("40g", 60.0, 100.0)
                     )
                 )
             )
