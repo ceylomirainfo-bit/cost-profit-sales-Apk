@@ -234,7 +234,7 @@ fun ProductsScreen(
                             modifier = Modifier
                                 .weight(1f)
                                 .clip(RoundedCornerShape(8.dp))
-                                .background(if (isAllSelected) Color(0xFF3E2316) else Color.Transparent)
+                                .background(if (isAllSelected) ForestGreenPrimary else Color.Transparent)
                                 .clickable { viewModel.setProductTypeFilter(null) }
                                 .padding(vertical = 8.dp)
                                 .testTag("product_tab_all")
@@ -243,7 +243,7 @@ fun ProductsScreen(
                                 text = "All ($allCount)",
                                 fontSize = 12.sp,
                                 fontWeight = if (isAllSelected) FontWeight.Bold else FontWeight.Medium,
-                                color = if (isAllSelected) Color(0xFFFAF6EE) else Color(0xFF5D4037)
+                                color = if (isAllSelected) Color(0xFFFAF6EE) else Color(0xFF285641)
                             )
                         }
 
@@ -254,7 +254,7 @@ fun ProductsScreen(
                             modifier = Modifier
                                 .weight(1f)
                                 .clip(RoundedCornerShape(8.dp))
-                                .background(if (isPremSelected) Color(0xFF3E2316) else Color.Transparent)
+                                .background(if (isPremSelected) ForestGreenPrimary else Color.Transparent)
                                 .clickable { viewModel.setProductTypeFilter(ProductType.PREMIUM) }
                                 .padding(vertical = 8.dp)
                                 .testTag("product_tab_premium")
@@ -271,7 +271,7 @@ fun ProductsScreen(
                                     text = "Premium ($premCount)",
                                     fontSize = 12.sp,
                                     fontWeight = if (isPremSelected) FontWeight.Bold else FontWeight.Medium,
-                                    color = if (isPremSelected) Color(0xFFFAF6EE) else Color(0xFF5D4037)
+                                    color = if (isPremSelected) Color(0xFFFAF6EE) else Color(0xFF285641)
                                 )
                             }
                         }
@@ -283,7 +283,7 @@ fun ProductsScreen(
                             modifier = Modifier
                                 .weight(1f)
                                 .clip(RoundedCornerShape(8.dp))
-                                .background(if (isNormSelected) Color(0xFF5D4037) else Color.Transparent)
+                                .background(if (isNormSelected) Color(0xFF1E523D) else Color.Transparent)
                                 .clickable { viewModel.setProductTypeFilter(ProductType.NORMAL) }
                                 .padding(vertical = 8.dp)
                                 .testTag("product_tab_normal")
@@ -292,7 +292,7 @@ fun ProductsScreen(
                                 text = "Normal ($normCount)",
                                 fontSize = 12.sp,
                                 fontWeight = if (isNormSelected) FontWeight.Bold else FontWeight.Medium,
-                                color = if (isNormSelected) Color(0xFFFAF6EE) else Color(0xFF5D4037)
+                                color = if (isNormSelected) Color(0xFFFAF6EE) else Color(0xFF285641)
                             )
                         }
                     }
@@ -314,16 +314,16 @@ fun ProductsScreen(
                                     text = "All Categories",
                                     fontSize = 11.sp,
                                     fontWeight = FontWeight.Bold,
-                                    color = if (selectedCat == null) Color.White else Color(0xFF3E2316)
+                                    color = if (selectedCat == null) Color.White else ForestGreenPrimary
                                 )
                             },
                             colors = FilterChipDefaults.filterChipColors(
-                                containerColor = Color(0xFFF7F3EC),
-                                labelColor = Color(0xFF3E2316),
+                                containerColor = Color(0xFFF3F8F5),
+                                labelColor = ForestGreenPrimary,
                                 selectedContainerColor = ForestGreenPrimary,
                                 selectedLabelColor = Color.White
                             ),
-                            border = BorderStroke(1.dp, if (selectedCat == null) ForestGreenPrimary else Color(0xFF8C7E74)),
+                            border = BorderStroke(1.dp, if (selectedCat == null) ForestGreenPrimary else Color(0xFF8BA89B)),
                             modifier = Modifier.testTag("category_filter_all")
                         )
                     }
@@ -338,16 +338,16 @@ fun ProductsScreen(
                                     text = category,
                                     fontSize = 11.sp,
                                     fontWeight = FontWeight.Bold,
-                                    color = if (isCatSelected) Color.White else Color(0xFF3E2316)
+                                    color = if (isCatSelected) Color.White else ForestGreenPrimary
                                 )
                             },
                             colors = FilterChipDefaults.filterChipColors(
-                                containerColor = Color(0xFFF7F3EC),
-                                labelColor = Color(0xFF3E2316),
+                                containerColor = Color(0xFFF3F8F5),
+                                labelColor = ForestGreenPrimary,
                                 selectedContainerColor = ForestGreenPrimary,
                                 selectedLabelColor = Color.White
                             ),
-                            border = BorderStroke(1.dp, if (isCatSelected) ForestGreenPrimary else Color(0xFF8C7E74)),
+                            border = BorderStroke(1.dp, if (isCatSelected) ForestGreenPrimary else Color(0xFF8BA89B)),
                             modifier = Modifier.testTag("category_filter_${category.lowercase().replace(" ", "_")}")
                         )
                     }
@@ -585,7 +585,7 @@ fun QuickVariantPricingDialog(
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel", color = Color(0xFF3E2316), fontWeight = FontWeight.SemiBold)
+                Text("Cancel", color = ForestGreenPrimary, fontWeight = FontWeight.SemiBold)
             }
         },
         containerColor = Color.White,
@@ -669,8 +669,8 @@ private fun ProductItemCard(
                         val isPremium = product.productType.equals(ProductType.PREMIUM, ignoreCase = true)
                         Surface(
                             shape = RoundedCornerShape(6.dp),
-                            color = if (isPremium) Color(0xFF3E2316) else Color(0xFFEDE0D4),
-                            border = BorderStroke(1.dp, if (isPremium) Color(0xFFB8860B) else Color(0xFFD7CCC8)),
+                            color = if (isPremium) ForestGreenPrimary else Color(0xFFE2EFE7),
+                            border = BorderStroke(1.dp, if (isPremium) Color(0xFFB8860B) else Color(0xFFC7DBD0)),
                             modifier = Modifier.testTag("product_type_badge_${product.id}")
                         ) {
                             Row(
@@ -680,7 +680,7 @@ private fun ProductItemCard(
                                 Icon(
                                     imageVector = Icons.Default.Star,
                                     contentDescription = null,
-                                    tint = if (isPremium) Color(0xFFFFD700) else Color(0xFF8D6E63),
+                                    tint = if (isPremium) Color(0xFFFFD700) else ForestGreenPrimary,
                                     modifier = Modifier.size(10.dp)
                                 )
                                 Spacer(modifier = Modifier.width(3.dp))
@@ -688,7 +688,7 @@ private fun ProductItemCard(
                                     text = if (isPremium) "Premium" else "Normal",
                                     fontSize = 10.sp,
                                     fontWeight = FontWeight.Bold,
-                                    color = if (isPremium) Color(0xFFFAF6EE) else Color(0xFF3E2316)
+                                    color = if (isPremium) Color(0xFFFAF6EE) else ForestGreenPrimary
                                 )
                             }
                         }
@@ -759,7 +759,7 @@ private fun ProductItemCard(
                 Text(
                     text = "Tap variant to edit cost",
                     fontSize = 10.sp,
-                    color = Color(0xFF5D4037),
+                    color = Color(0xFF285641),
                     fontWeight = FontWeight.SemiBold
                 )
             }
@@ -948,7 +948,7 @@ private fun ProductEditorDialog(
                         color = if (isPremiumSelected) Color(0xFFFAF6EE) else Color(0xFFFBF9F5),
                         border = BorderStroke(
                             if (isPremiumSelected) 2.dp else 1.dp,
-                            if (isPremiumSelected) Color(0xFF3E2316) else Color(0xFFD7CCC8)
+                            if (isPremiumSelected) ForestGreenPrimary else Color(0xFFC7DBD0)
                         ),
                         modifier = Modifier
                             .weight(1f)
@@ -960,7 +960,7 @@ private fun ProductEditorDialog(
                                 Icon(
                                     imageVector = Icons.Default.Star,
                                     contentDescription = null,
-                                    tint = if (isPremiumSelected) Color(0xFFB8860B) else Color(0xFF8D6E63),
+                                    tint = if (isPremiumSelected) Color(0xFFB8860B) else ForestGreenPrimary,
                                     modifier = Modifier.size(15.dp)
                                 )
                                 Spacer(modifier = Modifier.width(4.dp))
@@ -968,7 +968,7 @@ private fun ProductEditorDialog(
                                     text = "Premium",
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 13.sp,
-                                    color = if (isPremiumSelected) Color(0xFF3E2316) else DarkCharcoalText
+                                    color = if (isPremiumSelected) ForestGreenPrimary else DarkCharcoalText
                                 )
                             }
                             Spacer(modifier = Modifier.height(4.dp))
@@ -985,10 +985,10 @@ private fun ProductEditorDialog(
                     val isNormalSelected = (productType == ProductType.NORMAL)
                     Surface(
                         shape = RoundedCornerShape(10.dp),
-                        color = if (isNormalSelected) Color(0xFFFAF6EE) else Color(0xFFFBF9F5),
+                        color = if (isNormalSelected) Color(0xFFF3F8F5) else Color(0xFFFBF9F5),
                         border = BorderStroke(
                             if (isNormalSelected) 2.dp else 1.dp,
-                            if (isNormalSelected) Color(0xFF5D4037) else Color(0xFFD7CCC8)
+                            if (isNormalSelected) Color(0xFF1E523D) else Color(0xFFC7DBD0)
                         ),
                         modifier = Modifier
                             .weight(1f)
@@ -1001,7 +1001,7 @@ private fun ProductEditorDialog(
                                     text = "Normal",
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 13.sp,
-                                    color = if (isNormalSelected) Color(0xFF5D4037) else DarkCharcoalText
+                                    color = if (isNormalSelected) Color(0xFF1E523D) else DarkCharcoalText
                                 )
                             }
                             Spacer(modifier = Modifier.height(4.dp))
@@ -1194,16 +1194,16 @@ private fun ProductEditorDialog(
                                             text = size,
                                             fontSize = 11.sp,
                                             fontWeight = FontWeight.Bold,
-                                            color = if (isSelected) Color.White else Color(0xFF3E2316)
+                                            color = if (isSelected) Color.White else ForestGreenPrimary
                                         )
                                     },
                                     colors = FilterChipDefaults.filterChipColors(
-                                        containerColor = Color(0xFFF7F3EC),
-                                        labelColor = Color(0xFF3E2316),
+                                        containerColor = Color(0xFFF3F8F5),
+                                        labelColor = ForestGreenPrimary,
                                         selectedContainerColor = ForestGreenPrimary,
                                         selectedLabelColor = Color.White
                                     ),
-                                    border = BorderStroke(1.dp, if (isSelected) ForestGreenPrimary else Color(0xFF8C7E74))
+                                    border = BorderStroke(1.dp, if (isSelected) ForestGreenPrimary else Color(0xFF8BA89B))
                                 )
                             }
                         }
@@ -1388,8 +1388,8 @@ private fun ProductEditorDialog(
                 colors = ButtonDefaults.buttonColors(
                     containerColor = ForestGreenPrimary,
                     contentColor = Color.White,
-                    disabledContainerColor = Color(0xFFD7CCC8),
-                    disabledContentColor = Color(0xFF5D4037)
+                    disabledContainerColor = Color(0xFFD6EAE0),
+                    disabledContentColor = Color(0xFF4A6B5B)
                 ),
                 modifier = Modifier.testTag("save_product_button")
             ) {
@@ -1398,7 +1398,7 @@ private fun ProductEditorDialog(
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel", color = Color(0xFF3E2316), fontWeight = FontWeight.SemiBold)
+                Text("Cancel", color = ForestGreenPrimary, fontWeight = FontWeight.SemiBold)
             }
         },
         containerColor = Color.White,

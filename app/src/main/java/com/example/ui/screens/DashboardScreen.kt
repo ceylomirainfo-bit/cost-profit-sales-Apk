@@ -457,7 +457,7 @@ fun DashboardScreen(
                                         text = "Premium",
                                         fontWeight = FontWeight.Bold,
                                         fontSize = 13.sp,
-                                        color = Color(0xFF3E2316)
+                                        color = ForestGreenPrimary
                                     )
                                 }
                                 Text(
@@ -497,8 +497,8 @@ fun DashboardScreen(
                         // Normal Breakdown Card
                         Surface(
                             shape = RoundedCornerShape(12.dp),
-                            color = Color(0xFFF9F6F0),
-                            border = BorderStroke(1.dp, Color(0xFFD7CCC8)),
+                            color = Color(0xFFF4F8F5),
+                            border = BorderStroke(1.dp, Color(0xFFC7DBD0)),
                             modifier = Modifier
                                 .weight(1f)
                                 .testTag("normal_group_performance")
@@ -508,7 +508,7 @@ fun DashboardScreen(
                                     text = "Normal",
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 13.sp,
-                                    color = Color(0xFF5D4037)
+                                    color = Color(0xFF1E523D)
                                 )
                                 Text(
                                     text = "${summary.totalNormalProducts} catalogue items",
@@ -539,7 +539,7 @@ fun DashboardScreen(
                                     text = "Profit: ${CurrencyFormatter.formatLkr(summary.dateNormalProfit)}",
                                     fontSize = 11.sp,
                                     fontWeight = FontWeight.Bold,
-                                    color = Color(0xFF5D4037)
+                                    color = Color(0xFF1E523D)
                                 )
                             }
                         }
